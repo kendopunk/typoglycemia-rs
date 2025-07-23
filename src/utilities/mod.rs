@@ -149,11 +149,11 @@ pub mod utils {
     }
 
     /// Split a string literal on the hyphen character, jumble each part and re-join
-    pub fn handle_hyphen_string(chunk: &'static str, valid_chars: &Vec<usize>) -> String {
+    pub fn handle_hyphen_string(chunk: &'static str) -> String {
         let mut coll: Vec<String> = Vec::new();
         let it: std::str::Split<'_, &'static str> = chunk.split("-");
         for s in it {
-            coll.push(jumble(s.to_owned(), &valid_chars));
+            coll.push(jumble(s.to_owned()));
         }
 
         coll.join("-")
@@ -166,21 +166,22 @@ pub mod utils {
     ///
     /// ```
     /// use typoglycemia::utils::jumble;
-    /// let valid_chars = typoglycemia::utils::get_all_valid_chars_usize();
     /// let sentence = String::from("Now is the time for all good men to come to the aid of their country.");
     /// let lng = sentence.len();
-    /// let result = typoglycemia::utils::jumble(sentence, &valid_chars);
+    /// let result = typoglycemia::utils::jumble(sentence);
     /// assert_eq!(result.len(), lng);
-    pub fn jumble(s: String, valid_chars: &Vec<usize>) -> String {
+    pub fn jumble(s: String) -> String {
         // <= 3, > 20 or numeric then return as-is
         if s.len() <= 3 || s.len() > 20 || is_numeric_string(s.as_str()) {
             return s;
         }
 
+        // vector of valid ASCII characters (usize)
+        let valid_chars = get_all_valid_chars_usize();
         let chunk = s.as_str();
         let g = chunk.graphemes(true).collect::<Vec<&str>>();
-        let start_index = get_valid_start_index(chunk, valid_chars);
-        let end_index = get_valid_end_index(chunk, valid_chars);
+        let start_index = get_valid_start_index(chunk, &valid_chars);
+        let end_index = get_valid_end_index(chunk, &valid_chars);
 
         let first = &g[0..=start_index];
         let middle = &g[start_index + 1..end_index];
@@ -259,10 +260,8 @@ pub mod utils {
 
     #[test]
     fn test_single_hyphen_string() {
-        let all_valid_ascii = get_all_valid_chars_usize();
-
         let s = "nitty-gritty";
-        let result = handle_hyphen_string(s, &all_valid_ascii);
+        let result = handle_hyphen_string(s);
         let parts: Vec<&str> = result.split("-").collect();
 
         let first_word = parts.get(0).unwrap();
@@ -280,10 +279,8 @@ pub mod utils {
 
     #[test]
     fn test_double_hyphen_string() {
-        let all_valid_ascii = get_all_valid_chars_usize();
-
-        let s = "over-the-counter";
-        let result = handle_hyphen_string(s, &all_valid_ascii);
+        let s: &'static str = "over-the-counter";
+        let result: String = handle_hyphen_string(s);
         let parts: Vec<&str> = result.split("-").collect();
 
         let first_word = parts.get(0).unwrap();
@@ -318,8 +315,6 @@ pub mod utils {
 
     #[test]
     fn jumble_short_words() {
-        let all_valid_ascii = get_all_valid_chars_usize();
-
         let mut map: std::collections::HashMap<String, String> = std::collections::HashMap::new();
         map.insert(String::from(""), String::from(""));
         map.insert(String::from("a"), String::from("a"));
@@ -333,10 +328,7 @@ pub mod utils {
         );
 
         for (word, matcher) in map.iter() {
-            assert_eq!(
-                jumble(word.to_string(), &all_valid_ascii),
-                matcher.to_string()
-            );
+            assert_eq!(jumble(word.to_string()), matcher.to_string());
         }
     }
 }

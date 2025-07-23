@@ -7,6 +7,7 @@
 mod utilities;
 
 pub use crate::utilities::utils;
+use crate::utilities::utils::jumble;
 
 // // O-9
 // pub const ZERO_TO_NINE: Range<i32> = 48..57;
@@ -25,11 +26,15 @@ pub use crate::utilities::utils;
 ///
 /// # Examples
 ///
-pub fn typoglycemia(_s: impl Into<String>) -> String {
-    let foo = "234_2342";
-    assert_eq!(utils::is_numeric_string(foo), true);
-    String::from("Fred")
+pub fn typoglycemia<S: Into<String>>(input: S) -> String {
+    let s = input.into();
+    let result = jumble(s);
+    result
 }
+
+// pub fn to_lowercase<S: AsRef<str>>(input: S) -> String {
+//     input.as_ref().to_lowercase()
+// }
 // pub fn typoglycemia(left: u64, right: u64) -> u64 {
 //     left + right
 // }
