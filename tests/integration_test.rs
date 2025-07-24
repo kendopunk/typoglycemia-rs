@@ -3,6 +3,13 @@ use unicode_segmentation::UnicodeSegmentation;
 
 #[cfg(test)]
 #[test]
+fn it_handles_a_string_slice() {
+    let s: &str = "slice";
+    let result = typoglycemia(s);
+    assert_eq!(result.chars().nth(0), Some('s'));
+    assert_eq!(result.chars().nth(4), Some('e'));
+}
+#[test]
 fn it_does_not_typoglycemify_short_words() {
     let lst = [String::from("a"), String::from("an"), String::from("foo")];
     for word in lst.iter() {
@@ -55,26 +62,26 @@ fn it_ignores_beginning_and_ending_non_ascii() {
     assert_eq!(g.get(0), Some(&"😈"));
     assert_eq!(g.get(3), Some(&"❤️"));
 }
-#[test]
-fn it_handles_a_sentence_one() {
-    let input = "Once midnight";
-    let result = typoglycemia(input);
-    println!("{:?}", result);
+// #[test]
+// fn it_handles_a_sentence_one() {
+//     let input = "Once midnight";
+//     let result = typoglycemia(input);
+//     println!("{:?}", result);
 
-    assert_eq!(1, 1);
-    // let input = "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quaint and curious volume of forgotten lore— While I nodded, nearly napping, suddenly there came a tapping, As of some one gently rapping, rapping at my chamber door.";
-    // let result: String = typoglycemia(input);
-    // let g = result.graphemes(true).collect::<Vec<&str>>();
+//     assert_eq!(1, 1);
+// let input = "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quaint and curious volume of forgotten lore— While I nodded, nearly napping, suddenly there came a tapping, As of some one gently rapping, rapping at my chamber door.";
+// let result: String = typoglycemia(input);
+// let g = result.graphemes(true).collect::<Vec<&str>>();
 
-    // println!("{}", result);
+// println!("{}", result);
 
-    // assert_eq!(result, input.to_string());
+// assert_eq!(result, input.to_string());
 
-    // // let input = "😈Hi❤️";
-    // // let result: String = typoglycemia(input);
-    // // let g = result.graphemes(true).collect::<Vec<&str>>();
+// // let input = "😈Hi❤️";
+// // let result: String = typoglycemia(input);
+// // let g = result.graphemes(true).collect::<Vec<&str>>();
 
-    // // assert_eq!(result, input.to_string());
-    // // assert_eq!(g.get(0), Some(&"😈"));
-    // // assert_eq!(g.get(3), Some(&"❤️"));
-}
+// // assert_eq!(result, input.to_string());
+// // assert_eq!(g.get(0), Some(&"😈"));
+// // assert_eq!(g.get(3), Some(&"❤️"));
+//}

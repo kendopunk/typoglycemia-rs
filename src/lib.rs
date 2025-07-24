@@ -1,89 +1,48 @@
 mod utilities;
 
 pub use crate::utilities::utils;
-use crate::utilities::utils::{has_hyphens, jumble};
+use crate::utilities::utils::{handle_hyphenated_string, has_hyphens, scramble_word};
 
-/// Creates a person with the foo name.
+/// typoglycemia() takes a str and will scramble it according to typoglycemia rules,  
+/// where the first and last character of every word or chunk will retain their  
+/// first/last positions, respectively but interior characters will be scrambled.
+///
+/// # Arguments
+///
+/// - `s` (`&str`) - The input string or sentence
+///
+/// # Returns
+///
+/// - `String` - A typoglycemified String object
 ///
 /// # Examples
 ///
+/// ```
+/// use typoglycemia::typoglycemia;
+/// let result = typoglycemia("hello world");
+/// let parts: Vec<&str> = result.split_whitespace().collect();
 ///
-// /// pub fn to_lowercase(input: &str) -> String {
-//     input.to_lowercase()
-// }
-pub fn typoglycemia<T: Into<String>>(input: T) -> String {
-    let s = input.into();
+/// let v1 = vec!["hello", "hlelo", "hlleo"];
+/// let v2 = vec!["world", "wolrd", "wlord", "wlrod", "wrlod", "wrold"];
+///
+/// let first_scrambled_word = parts.get(0).unwrap();
+/// let second_scrambled_word = parts.get(1).unwrap();
+///
+/// assert!(v1.contains(first_scrambled_word));
+/// assert!(v2.contains(second_scrambled_word));
+///
+/// ```
+pub fn typoglycemia(s: &str) -> String {
     let parts: Vec<&str> = s.split_whitespace().collect();
-    let mut collector: Vec<String> = Vec::new();
+    let mut vec_of_scrambles: Vec<String> = Vec::new();
 
     for chunk in parts.iter() {
-        let hh = has_hyphens(chunk);
-        if hh {
-            collector.push(utils::handle_hyphen_string(chunk));
+        let hashyph: bool = has_hyphens(chunk);
+        if hashyph {
+            vec_of_scrambles.push(handle_hyphenated_string(chunk));
         } else {
-            collector.push(jumble(chunk.to_string()));
+            vec_of_scrambles.push(scramble_word(chunk.to_string()));
         }
     }
-    collector.join(" ")
+    vec_of_scrambles.join(" ")
 }
-
-// pub fn typoglycemia<T: Into<str>>(input: T) -> String {
-//     let hello_world: &'static str = "Hello, world!";
-//     // let input_string: String = input.into();
-
-//     // let x = String::from("hello there dude");
-//     // let parts: Vec<_> = x.split_whitespace().collect();
-//     // // let parts: Vec<&str> = *input_string.split_whitespace().collect::<Vec<&str>>();
-//     // let mut collector: Vec<String> = Vec::new();
-
-//     // // //
-
-//     // for chunk in parts.iter() {
-//     //     if has_hyphens(chunk) {
-//     //         collector.push(utils::handle_hyphen_string(chunk));
-//     //     } else {
-//     //         collector.push(jumble(chunk.to_string()));
-//     //     }
-//     // }
-
-//     // collector.join(" ")
-
-//     String::from("Fred")
-// }
-
-// pub fn to_lowercase<S: AsRef<str>>(input: S) -> String {
-//     input.as_ref().to_lowercase()
-// }
-// pub fn typoglycemia(left: u64, right: u64) -> u64 {
-//     left + right
-// }
-
-// mod ascii
-// mod utilities
-
-// #[cfg(test)]
-// mod integration_test;
-
-// integration_test/mod.rs
-
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-
-// #[test]
-// fn it_works() {
-//     let result = add(2, 2);
-//     assert_eq!(result, 4);
-// }
-
-//     #[test]
-//     fn it_handles_string_object() {
-//         let result = typoglycemia(String::from("Marge"));
-//         assert_eq!(result, String::from("Fred"));
-//     }
-//     #[test]
-//     fn it_handles_string_slice() {
-//         let result = typoglycemia("blah");
-//         assert_eq!(result, String::from("Fred"));
-//     }
-// }

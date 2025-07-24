@@ -64,7 +64,7 @@ pub mod utils {
         let mut it: std::slice::Iter<'_, &str> = g.iter();
         let index: Option<usize> = it.position(|&r| r == "-");
 
-        let ret = match index {
+        let ret: bool = match index {
             None => false,
             _ => true,
         };
@@ -72,8 +72,12 @@ pub mod utils {
         ret
     }
 
-    /// Returns a(n) i32 Vector of all allowable ASCII characters
-    fn get_all_valid_chars_i32() -> Vec<i32> {
+    /// Get i32 vector of valid ASCII characters
+    ///
+    /// # Returns
+    ///
+    /// - `Vec<i32>` - A vector of i32 representations of allowable ASCII codes
+    fn get_all_valid_ascii_chars_i32() -> Vec<i32> {
         let zero_to_nine: Vec<i32> = ZERO_TO_NINE.collect();
         let ucase_az: Vec<i32> = UCASE_AZ.collect();
         let lcase_az: Vec<i32> = LCASE_AZ.collect();
@@ -84,9 +88,21 @@ pub mod utils {
         [zero_to_nine, ucase_az, lcase_az, latin1, latin2, misc_chars].concat()
     }
 
-    /// Returns a usize Vector of all allowable ASCII characters
-    pub fn get_all_valid_chars_usize() -> Vec<usize> {
-        get_all_valid_chars_i32()
+    /// Get usize vector of valid ASCII characters
+    ///
+    /// # Returns
+    ///
+    /// - `Vec<usize>` - A vector of usize representations of allowable ASCII codes
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use typoglycemia::utils::get_all_valid_ascii_chars_usize;
+    /// let chars = get_all_valid_ascii_chars_usize();
+    /// assert!(chars.len() > 0);
+    /// ```
+    pub fn get_all_valid_ascii_chars_usize() -> Vec<usize> {
+        get_all_valid_ascii_chars_i32()
             .iter()
             .map(|&e| e as usize)
             .collect()
@@ -98,18 +114,18 @@ pub mod utils {
     ///
     /// ```
     /// use typoglycemia::utils::get_valid_start_index;
-    /// let valid_chars = typoglycemia::utils::get_all_valid_chars_usize();
+    /// let valid_chars = typoglycemia::utils::get_all_valid_ascii_chars_usize();
     /// let word = "__hello";
     /// assert_eq!(typoglycemia::utils::get_valid_start_index(word, &valid_chars), 2);
     /// ```
     pub fn get_valid_start_index(s: &str, valid_chars: &Vec<usize>) -> usize {
         let mut ret: usize = 0;
-        let trimmed = s.trim();
+        let trimmed: &str = s.trim();
 
-        let g = trimmed.graphemes(true).collect::<Vec<&str>>();
+        let g: Vec<&str> = trimmed.graphemes(true).collect::<Vec<&str>>();
 
         for (index, character) in g.iter().enumerate() {
-            let bytes = character.as_bytes();
+            let bytes: &[u8] = character.as_bytes();
             let first_byte: usize = bytes[0] as usize;
             if character.is_ascii() && valid_chars.contains(&first_byte) {
                 ret = index;
@@ -126,18 +142,18 @@ pub mod utils {
     ///
     /// ```
     /// use typoglycemia::utils::get_valid_end_index;
-    /// let valid_chars = typoglycemia::utils::get_all_valid_chars_usize();
+    /// let valid_chars = typoglycemia::utils::get_all_valid_ascii_chars_usize();
     /// let word = "hello world!";
     /// assert_eq!(typoglycemia::utils::get_valid_end_index(word, &valid_chars), 10); // "d", not "!"
     /// ```
     pub fn get_valid_end_index(s: &str, valid_chars: &Vec<usize>) -> usize {
         let mut ret: usize = 0;
-        let trimmed = s.trim();
+        let trimmed: &str = s.trim();
 
-        let g = trimmed.graphemes(true).collect::<Vec<&str>>();
+        let g: Vec<&str> = trimmed.graphemes(true).collect::<Vec<&str>>();
 
         for (index, character) in g.iter().rev().enumerate() {
-            let bytes = character.as_bytes();
+            let bytes: &[u8] = character.as_bytes();
             let first_byte: usize = bytes[0] as usize;
             if character.is_ascii() && valid_chars.contains(&first_byte) {
                 ret = index;
@@ -148,36 +164,47 @@ pub mod utils {
         g.len() - ret - 1
     }
 
-    /// Split a string literal on the hyphen character, jumble each part and re-join
-    pub fn handle_hyphen_string(chunk: &str) -> String {
+    /// Describe this function.
+    ///
+    /// # Arguments
+    ///
+    /// - `chunk` (`&str`) - The hyphenated word or chunk
+    ///
+    /// # Returns
+    ///
+    /// - `String` - Each part of the word between the hyphens will be typoglycemified and reassembled
+    ///
+    /// # Examples
+    ///
+    pub fn handle_hyphenated_string(chunk: &str) -> String {
         let mut coll: Vec<String> = Vec::new();
         let it: std::str::Split<'_, &str> = chunk.split("-");
         for s in it {
-            coll.push(jumble(s.to_owned()));
+            coll.push(scramble_word(s.to_owned()));
         }
 
         coll.join("-")
     }
 
-    /// "jumble" is the primary typoglycemic function of this crate and
+    /// "scramble_word" is the primary typoglycemic function of this crate and
     /// will take text input and typoglycemify it
     ///
     /// # Examples
     ///
     /// ```
-    /// use typoglycemia::utils::jumble;
+    /// use typoglycemia::utils::scramble_word;
     /// let sentence = String::from("Now is the time for all good men to come to the aid of their country.");
     /// let lng = sentence.len();
-    /// let result = typoglycemia::utils::jumble(sentence);
+    /// let result = typoglycemia::utils::scramble_word(sentence);
     /// assert_eq!(result.len(), lng);
-    pub fn jumble(s: String) -> String {
+    pub fn scramble_word(s: String) -> String {
         // <= 3, > 20 or numeric then return as-is
         if s.len() <= 3 || s.len() > 20 || is_numeric_string(s.as_str()) {
             return s;
         }
 
         // vector of valid ASCII characters (usize)
-        let valid_chars = get_all_valid_chars_usize();
+        let valid_chars = get_all_valid_ascii_chars_usize();
         let chunk = s.as_str();
         let g = chunk.graphemes(true).collect::<Vec<&str>>();
         let start_index = get_valid_start_index(chunk, &valid_chars);
@@ -189,9 +216,9 @@ pub mod utils {
 
         let mut mtv = middle.to_vec();
         mtv.shuffle(&mut rng());
-        let middle_jumble = &mtv[..];
+        let middle_scrambled = &mtv[..];
 
-        let concatenated = [first, middle_jumble, last].concat();
+        let concatenated = [first, middle_scrambled, last].concat();
 
         concatenated.join("")
     }
@@ -213,7 +240,7 @@ pub mod utils {
 
     #[test]
     fn validate_start_indexes() {
-        let all_valid_ascii = get_all_valid_chars_usize();
+        let all_valid_ascii = get_all_valid_ascii_chars_usize();
 
         let mut map: std::collections::HashMap<&'static str, usize> =
             std::collections::HashMap::new();
@@ -229,7 +256,7 @@ pub mod utils {
 
     #[test]
     fn validate_end_indexes() {
-        let all_valid_ascii = get_all_valid_chars_usize();
+        let all_valid_ascii = get_all_valid_ascii_chars_usize();
 
         let mut map: std::collections::HashMap<&'static str, usize> =
             std::collections::HashMap::new();
@@ -261,7 +288,7 @@ pub mod utils {
     #[test]
     fn test_single_hyphen_string() {
         let s = "nitty-gritty";
-        let result = handle_hyphen_string(s);
+        let result = handle_hyphenated_string(s);
         let parts: Vec<&str> = result.split("-").collect();
 
         let first_word = parts.get(0).unwrap();
@@ -280,7 +307,7 @@ pub mod utils {
     #[test]
     fn test_double_hyphen_string() {
         let s: &'static str = "over-the-counter";
-        let result: String = handle_hyphen_string(s);
+        let result: String = handle_hyphenated_string(s);
         let parts: Vec<&str> = result.split("-").collect();
 
         let first_word = parts.get(0).unwrap();
@@ -314,7 +341,22 @@ pub mod utils {
     }
 
     #[test]
-    fn jumble_short_words() {
+    fn test_triple_hyphen_string() {
+        let s: &'static str = "head-in-the-clouds";
+        let result: String = handle_hyphenated_string(s);
+        let parts: Vec<&str> = result.split("-").collect();
+
+        assert_eq!(parts.get(1), Some("in").as_ref());
+        assert_eq!(parts.get(2), Some("the").as_ref());
+
+        let fourth_word = parts.get(3).unwrap();
+        println!("{}", fourth_word);
+        assert_eq!(fourth_word.chars().nth(0), Some('c'));
+        assert_eq!(fourth_word.chars().nth(5), Some('s'));
+    }
+
+    #[test]
+    fn scramble_short_words() {
         let mut map: std::collections::HashMap<String, String> = std::collections::HashMap::new();
         map.insert(String::from(""), String::from(""));
         map.insert(String::from("a"), String::from("a"));
@@ -328,7 +370,7 @@ pub mod utils {
         );
 
         for (word, matcher) in map.iter() {
-            assert_eq!(jumble(word.to_string()), matcher.to_string());
+            assert_eq!(scramble_word(word.to_string()), matcher.to_string());
         }
     }
 }
