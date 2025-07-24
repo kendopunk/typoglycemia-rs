@@ -1,36 +1,55 @@
-// use atoi::atoi;
-// use rand::rng;
-// use rand::seq::SliceRandom;
-// use std::ops::Range;
-// use unicode_segmentation::UnicodeSegmentation;
-
 mod utilities;
 
 pub use crate::utilities::utils;
-use crate::utilities::utils::jumble;
-
-// // O-9
-// pub const ZERO_TO_NINE: Range<i32> = 48..57;
-// // A - Z
-// pub const UCASE_AZ: Range<i32> = 65..91;
-// // a - z
-// pub const LCASE_AZ: Range<i32> = 97..123;
-// // À - ö
-// pub const LATIN_1: Range<i32> = 192..247;
-// // ø - ÿ
-// pub const LATIN_2: Range<i32> = 248..246;
-// // ƒ, Š, Œ, Ž, š, œ, ž, Ÿ
-// pub const MISC_CHARS: &[&i32] = &[&131, &138, &140, &142, &154, &156, &158, &159];
+use crate::utilities::utils::{has_hyphens, jumble};
 
 /// Creates a person with the foo name.
 ///
 /// # Examples
 ///
-pub fn typoglycemia<S: Into<String>>(input: S) -> String {
+///
+// /// pub fn to_lowercase(input: &str) -> String {
+//     input.to_lowercase()
+// }
+pub fn typoglycemia<T: Into<String>>(input: T) -> String {
     let s = input.into();
-    let result = jumble(s);
-    result
+    let parts: Vec<&str> = s.split_whitespace().collect();
+    let mut collector: Vec<String> = Vec::new();
+
+    for chunk in parts.iter() {
+        let hh = has_hyphens(chunk);
+        if hh {
+            collector.push(utils::handle_hyphen_string(chunk));
+        } else {
+            collector.push(jumble(chunk.to_string()));
+        }
+    }
+    collector.join(" ")
 }
+
+// pub fn typoglycemia<T: Into<str>>(input: T) -> String {
+//     let hello_world: &'static str = "Hello, world!";
+//     // let input_string: String = input.into();
+
+//     // let x = String::from("hello there dude");
+//     // let parts: Vec<_> = x.split_whitespace().collect();
+//     // // let parts: Vec<&str> = *input_string.split_whitespace().collect::<Vec<&str>>();
+//     // let mut collector: Vec<String> = Vec::new();
+
+//     // // //
+
+//     // for chunk in parts.iter() {
+//     //     if has_hyphens(chunk) {
+//     //         collector.push(utils::handle_hyphen_string(chunk));
+//     //     } else {
+//     //         collector.push(jumble(chunk.to_string()));
+//     //     }
+//     // }
+
+//     // collector.join(" ")
+
+//     String::from("Fred")
+// }
 
 // pub fn to_lowercase<S: AsRef<str>>(input: S) -> String {
 //     input.as_ref().to_lowercase()

@@ -59,7 +59,7 @@ pub mod utils {
     /// assert_eq!(has_hyphens(word1), true);
     /// assert_eq!(has_hyphens(word2), false);
     /// ```
-    pub fn has_hyphens(chunk: &'static str) -> bool {
+    pub fn has_hyphens(chunk: &str) -> bool {
         let g: Vec<&str> = chunk.graphemes(true).collect::<Vec<&str>>();
         let mut it: std::slice::Iter<'_, &str> = g.iter();
         let index: Option<usize> = it.position(|&r| r == "-");
@@ -149,9 +149,9 @@ pub mod utils {
     }
 
     /// Split a string literal on the hyphen character, jumble each part and re-join
-    pub fn handle_hyphen_string(chunk: &'static str) -> String {
+    pub fn handle_hyphen_string(chunk: &str) -> String {
         let mut coll: Vec<String> = Vec::new();
-        let it: std::str::Split<'_, &'static str> = chunk.split("-");
+        let it: std::str::Split<'_, &str> = chunk.split("-");
         for s in it {
             coll.push(jumble(s.to_owned()));
         }
