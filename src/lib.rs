@@ -3,7 +3,7 @@ mod utilities;
 pub use crate::utilities::utils;
 use crate::utilities::utils::scramble_word;
 
-/// typoglycemia() takes a str and will scramble it according to typoglycemia rules,  
+/// typoglycemia() takes a str as input and will scramble it according to typoglycemia rules,  
 /// where the first and last character of every word or chunk will retain their  
 /// first/last positions, respectively but interior characters will be scrambled.
 ///

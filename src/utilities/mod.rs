@@ -14,7 +14,7 @@ const LCASE_AZ: Range<i32> = 97..123;
 const LATIN_1: Range<i32> = 192..247;
 
 /// ASCII ø - ÿ
-const LATIN_2: Range<i32> = 248..246;
+const LATIN_2: Range<i32> = 248..256;
 
 /// ASCII ƒ, Š, Œ, Ž, š, œ, ž, Ÿ
 const MISC_CHARS: &[&i32] = &[&131, &138, &140, &142, &154, &156, &158, &159];
@@ -30,13 +30,6 @@ pub mod utils {
     /// Strings starting with numeric characters should be kept as-is and not typoglycemified, e.g.  
     /// date (12/22/1986) and/or time (15:32)
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// use typoglycemia::utils::is_numeric_string;
-    /// let word = "12/22/1986";
-    /// assert_eq!(is_numeric_string(word), true);
-    /// ```
     fn is_numeric_string(s: &str) -> bool {
         let atoi_str: Option<u64> = atoi::<u64>(s.as_bytes());
 
@@ -56,7 +49,7 @@ pub mod utils {
     ///
     /// # Returns
     ///
-    /// - `bool` - The boolean result
+    /// - `bool` - Whether or not hyphen or hyphens exist
     ///
     fn has_hyphens(s: &str) -> bool {
         let g: Vec<&str> = s.graphemes(true).collect::<Vec<&str>>();
@@ -76,6 +69,7 @@ pub mod utils {
     /// # Returns
     ///
     /// - `Vec<i32>` - A vector of i32 representations of allowable ASCII codes
+    ///
     fn get_all_valid_ascii_chars_i32() -> Vec<i32> {
         let zero_to_nine: Vec<i32> = ZERO_TO_NINE.collect();
         let ucase_az: Vec<i32> = UCASE_AZ.collect();
@@ -91,15 +85,8 @@ pub mod utils {
     ///
     /// # Returns
     ///
-    /// - `Vec<usize>` - A vector of usize representations of allowable ASCII codes
+    /// - `Vec<usize>` - Describe the return value.
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// use typoglycemia::utils::get_all_valid_ascii_chars_usize;
-    /// let chars = get_all_valid_ascii_chars_usize();
-    /// assert!(chars.len() > 0);
-    /// ```
     fn get_all_valid_ascii_chars_usize() -> Vec<usize> {
         get_all_valid_ascii_chars_i32()
             .iter()
@@ -107,16 +94,16 @@ pub mod utils {
             .collect()
     }
 
-    /// Returns the index of the first allowable ASCII character from a word
+    /// Returns the index of the first allowable ASCII character in a word
     ///
-    /// # Examples
+    /// # Arguments
     ///
-    /// ```
-    /// use typoglycemia::utils::get_valid_start_index;
-    /// let valid_chars = typoglycemia::utils::get_all_valid_ascii_chars_usize();
-    /// let word = "__hello";
-    /// assert_eq!(typoglycemia::utils::get_valid_start_index(word, &valid_chars), 2);
-    /// ```
+    /// - `s` (`&str`) - The input string
+    /// - `valid_chars` (`&Vec<usize>`) - vector comprisesd of usize valid ASCII characters
+    ///
+    /// # Returns
+    ///
+    /// - `usize` - The first valid start index
     fn get_valid_start_index(s: &str, valid_chars: &Vec<usize>) -> usize {
         let mut ret: usize = 0;
         let trimmed: &str = s.trim();
@@ -135,16 +122,17 @@ pub mod utils {
         ret
     }
 
-    /// Returns the index of the last allowable ASCII character from a word
+    /// Returns the index of the last allowable ASCII character in a word
     ///
-    /// # Examples
+    /// # Arguments
     ///
-    /// ```
-    /// use typoglycemia::utils::get_valid_end_index;
-    /// let valid_chars = typoglycemia::utils::get_all_valid_ascii_chars_usize();
-    /// let word = "hello world!";
-    /// assert_eq!(typoglycemia::utils::get_valid_end_index(word, &valid_chars), 10); // "d", not "!"
-    /// ```
+    /// - `s` (`&str`) - The input string
+    /// - `valid_chars` (`&Vec<usize>`) - vector comprised of usize valid ASCII characters
+    ///
+    /// # Returns
+    ///
+    /// - `usize` - The first valid start index
+    ///
     fn get_valid_end_index(s: &str, valid_chars: &Vec<usize>) -> usize {
         let mut ret: usize = 0;
         let trimmed: &str = s.trim();
@@ -172,9 +160,7 @@ pub mod utils {
     ///
     /// # Returns
     ///
-    /// - `String` - The hyphenated string
-    ///
-    /// # Examples
+    /// - `String` - The re-hyphenated string with portions scrambled
     ///
     fn handle_hyphenated_string(s: &str) -> String {
         let mut coll: Vec<String> = Vec::new();
@@ -198,21 +184,24 @@ pub mod utils {
     /// let result = typoglycemia::utils::scramble_word(sentence);
     /// assert_eq!(result.len(), lng);
     pub fn scramble_word(s: String) -> String {
-        // <= 3, > 20 or numeric then return as-is
-        if s.len() <= 3 || s.len() > 20 || is_numeric_string(s.as_str()) {
+        let sasstr: &str = s.as_str();
+
+        // vector of valid ASCII characters (usize)
+        let valid_chars: Vec<usize> = get_all_valid_ascii_chars_usize();
+
+        // get the graphemes
+        let g: Vec<&str> = sasstr.graphemes(true).collect::<Vec<&str>>();
+
+        // (grapheme length <= 3 or > 20) or numeric then return as-is
+        if g.len() <= 3 || g.len() > 20 || is_numeric_string(s.as_str()) {
             return s;
         }
 
         if has_hyphens(&s) {
-            let handled = handle_hyphenated_string(&s);
-            return handled;
+            let hyphens_handled = handle_hyphenated_string(&s);
+            return hyphens_handled;
         }
 
-        // vector of valid ASCII characters (usize)
-        let valid_chars = get_all_valid_ascii_chars_usize();
-
-        let sasstr = s.as_str();
-        let g = sasstr.graphemes(true).collect::<Vec<&str>>();
         let start_index = get_valid_start_index(sasstr, &valid_chars);
         let end_index = get_valid_end_index(sasstr, &valid_chars);
 
