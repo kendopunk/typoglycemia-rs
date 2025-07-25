@@ -62,26 +62,32 @@ fn it_ignores_beginning_and_ending_non_ascii() {
     assert_eq!(g.get(0), Some(&"😈"));
     assert_eq!(g.get(3), Some(&"❤️"));
 }
+
 // #[test]
-// fn it_handles_a_sentence_one() {
-//     let input = "Once midnight";
+// /**
+//  * Example output
+//  * $cargo test -- --show-output
+//  */
+// fn example_1() {
+//     let input = "Once upon a midnight dreary, while I pondered, weak and weary, \
+//     Over many a quaint and curious volume of forgotten lore, \
+//     While I nodded, nearly napping, suddenly there came a tapping, \
+//     As of some one gently rapping, rapping at my chamber door.";
 //     let result = typoglycemia(input);
-//     println!("{:?}", result);
-
+//     println!("{}", result);
 //     assert_eq!(1, 1);
-// let input = "Once upon a midnight dreary, while I pondered, weak and weary, Over many a quaint and curious volume of forgotten lore— While I nodded, nearly napping, suddenly there came a tapping, As of some one gently rapping, rapping at my chamber door.";
-// let result: String = typoglycemia(input);
-// let g = result.graphemes(true).collect::<Vec<&str>>();
+// }
 
-// println!("{}", result);
-
-// assert_eq!(result, input.to_string());
-
-// // let input = "😈Hi❤️";
-// // let result: String = typoglycemia(input);
-// // let g = result.graphemes(true).collect::<Vec<&str>>();
-
-// // assert_eq!(result, input.to_string());
-// // assert_eq!(g.get(0), Some(&"😈"));
-// // assert_eq!(g.get(3), Some(&"❤️"));
-//}
+// #[test]
+// /**
+//  * Example output w/ some emojis
+//  * $cargo test -- --show-output
+//  */
+// fn example_2() {
+//     let input = "Four score and seven years ago 📜, our fathers🧓 brought forth on this \
+//     continent a new ❤️nation, conceived in Liberty, and dedicated to the\
+//     proposition that all men are created equal. 🇺🇸";
+//     let result = typoglycemia(input);
+//     println!("{}", result);
+//     assert_eq!(2, 2);
+// }
