@@ -2,19 +2,19 @@
 use std::ops::Range;
 
 ///  ASCII O-9
-const ZERO_TO_NINE: Range<i32> = 48..57;
+const ZERO_TO_NINE: Range<usize> = 48..57;
 
 /// ASCII A - Z
-const UCASE_AZ: Range<i32> = 65..91;
+const UCASE_AZ: Range<usize> = 65..91;
 
 /// ASCII a - z
-const LCASE_AZ: Range<i32> = 97..123;
+const LCASE_AZ: Range<usize> = 97..123;
 
 /// ASCII À - ö
-const LATIN_1: Range<i32> = 192..247;
+const LATIN_1: Range<usize> = 192..247;
 
 /// ASCII ø - ÿ
-const LATIN_2: Range<i32> = 248..256;
+const LATIN_2: Range<usize> = 248..256;
 
 /// ASCII ƒ, Š, Œ, Ž, š, œ, ž, Ÿ
 const MISC_CHARS: &[&i32] = &[&131, &138, &140, &142, &154, &156, &158, &159];
@@ -64,34 +64,21 @@ pub mod utils {
         ret
     }
 
-    /// Get i32 vector of valid ASCII characters
-    ///
-    /// # Returns
-    ///
-    /// - `Vec<i32>` - A vector of i32 representations of allowable ASCII codes
-    ///
-    fn get_all_valid_ascii_chars_i32() -> Vec<i32> {
-        let zero_to_nine: Vec<i32> = ZERO_TO_NINE.collect();
-        let ucase_az: Vec<i32> = UCASE_AZ.collect();
-        let lcase_az: Vec<i32> = LCASE_AZ.collect();
-        let latin1: Vec<i32> = LATIN_1.collect();
-        let latin2: Vec<i32> = LATIN_2.collect();
-        let misc_chars: Vec<i32> = MISC_CHARS.iter().map(|&x| *x).collect();
-
-        [zero_to_nine, ucase_az, lcase_az, latin1, latin2, misc_chars].concat()
-    }
-
     /// Get usize vector of valid ASCII characters
     ///
     /// # Returns
     ///
     /// - `Vec<usize>` - Describe the return value.
     ///
-    fn get_all_valid_ascii_chars_usize() -> Vec<usize> {
-        get_all_valid_ascii_chars_i32()
-            .iter()
-            .map(|&e| e as usize)
-            .collect()
+    fn get_all_valid_ascii_chars() -> Vec<usize> {
+        let zero_to_nine: Vec<usize> = ZERO_TO_NINE.collect();
+        let ucase_az: Vec<usize> = UCASE_AZ.collect();
+        let lcase_az: Vec<usize> = LCASE_AZ.collect();
+        let latin1: Vec<usize> = LATIN_1.collect();
+        let latin2: Vec<usize> = LATIN_2.collect();
+        let misc_chars: Vec<usize> = MISC_CHARS.iter().map(|&x| *x as usize).collect();
+
+        [zero_to_nine, ucase_az, lcase_az, latin1, latin2, misc_chars].concat()
     }
 
     /// Returns the index of the first allowable ASCII character in a word
@@ -187,7 +174,7 @@ pub mod utils {
         let sasstr: &str = s.as_str();
 
         // vector of valid ASCII characters (usize)
-        let valid_chars: Vec<usize> = get_all_valid_ascii_chars_usize();
+        let valid_chars: Vec<usize> = get_all_valid_ascii_chars();
 
         // get the graphemes
         let g: Vec<&str> = sasstr.graphemes(true).collect::<Vec<&str>>();
@@ -242,7 +229,7 @@ pub mod utils {
 
         #[test]
         fn validate_start_indexes() {
-            let all_valid_ascii = get_all_valid_ascii_chars_usize();
+            let all_valid_ascii = get_all_valid_ascii_chars();
 
             let mut map: std::collections::HashMap<&'static str, usize> =
                 std::collections::HashMap::new();
@@ -258,7 +245,7 @@ pub mod utils {
 
         #[test]
         fn validate_end_indexes() {
-            let all_valid_ascii = get_all_valid_ascii_chars_usize();
+            let all_valid_ascii = get_all_valid_ascii_chars();
 
             let mut map: std::collections::HashMap<&'static str, usize> =
                 std::collections::HashMap::new();

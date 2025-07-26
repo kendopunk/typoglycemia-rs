@@ -1,11 +1,11 @@
-use typoglycemia::typoglycemia;
+use typoglycemia::tg_standard;
 use unicode_segmentation::UnicodeSegmentation;
 
 #[cfg(test)]
 #[test]
 fn it_handles_a_string_slice() {
     let s: &str = "slice";
-    let result = typoglycemia(s);
+    let result = tg_standard(s);
     assert_eq!(result.chars().nth(0), Some('s'));
     assert_eq!(result.chars().nth(4), Some('e'));
 }
@@ -14,7 +14,7 @@ fn it_handles_a_string_slice() {
 fn it_does_not_typoglycemify_short_words() {
     let lst = [String::from("a"), String::from("an"), String::from("foo")];
     for word in lst.iter() {
-        let result = typoglycemia(word);
+        let result = tg_standard(word);
         assert_eq!(result, *word);
     }
 }
@@ -29,7 +29,7 @@ fn it_does_not_typoglycemify_long_words() {
         String::from("sesquipedalianistically"),
     ];
     for word in lst.iter() {
-        let result = typoglycemia(word);
+        let result = tg_standard(word);
         assert_eq!(result, *word);
     }
 }
@@ -37,7 +37,7 @@ fn it_does_not_typoglycemify_long_words() {
 #[test]
 fn it_ignores_beginning_non_ascii() {
     let input = "❤️Hi";
-    let result: String = typoglycemia(input);
+    let result: String = tg_standard(input);
     let g = result.graphemes(true).collect::<Vec<&str>>();
     assert_eq!(result, input.to_string());
     assert_eq!(g.get(0), Some(&"❤️"));
@@ -46,7 +46,7 @@ fn it_ignores_beginning_non_ascii() {
 #[test]
 fn it_ignores_ending_non_ascii() {
     let input = "Hi❤️";
-    let result: String = typoglycemia(input);
+    let result: String = tg_standard(input);
     let g = result.graphemes(true).collect::<Vec<&str>>();
 
     assert_eq!(result, input.to_string());
@@ -56,7 +56,7 @@ fn it_ignores_ending_non_ascii() {
 #[test]
 fn it_ignores_beginning_and_ending_non_ascii() {
     let input = "😈Hi❤️";
-    let result: String = typoglycemia(input);
+    let result: String = tg_standard(input);
     let g = result.graphemes(true).collect::<Vec<&str>>();
 
     assert_eq!(result, input.to_string());
@@ -74,7 +74,7 @@ fn example_raven_english() {
     Over many a quaint and curious volume of forgotten lore, \
     While I nodded, nearly napping, suddenly there came a tapping, \
     As of some one gently rapping, rapping at my chamber door.";
-    let result = typoglycemia(input);
+    let result = tg_standard(input);
 
     println!("");
     println!("{}", "*".repeat(40));
@@ -96,7 +96,7 @@ fn example_raven_french() {
     let input = "Jadis, par une minuit lugubre, tandis que je pensais, faible et las, à maints \
     grimoires oubliés, et que je hochais la tête, presque endormi, soudain il se fit un heurt, \
     comme de quelqu'un qui frapperait doucement, frappant à la porte de ma chambre";
-    let result = typoglycemia(input);
+    let result = tg_standard(input);
 
     println!("");
     println!("{}", "*".repeat(40));
@@ -116,7 +116,7 @@ fn example_raven_french() {
  */
 fn example_raven_german() {
     let input = "Einst in einer Mittnacht schaurig, als ich in entschwundner Kunde wunderlicher Bücher forschte, bis mein Geist die Kraft verlor, und mir's trübe ward im Kopfe, kam mir's plötzlich vor, als klopfe, jemand leis ans Tor, als klopfe - klopfe jemand sacht ans Tor.";
-    let result = typoglycemia(input);
+    let result = tg_standard(input);
 
     println!("");
     println!("{}", "*".repeat(40));
@@ -138,7 +138,7 @@ fn example_gettysburg_emojies() {
     let input = "Four score and seven years ago📜, our 🧓fathers brought \
     forth on this continent a new nation, conceived in Liberty, and dedicated to the \
     proposition that all men are created equal. 🇺🇸";
-    let result = typoglycemia(input);
+    let result = tg_standard(input);
 
     println!("");
     println!("{}", "*".repeat(40));
