@@ -1,11 +1,12 @@
 mod utilities;
 
-pub use crate::utilities::utils;
+pub use crate::utilities::utils; // for doctest
 use crate::utilities::utils::scramble_word;
 
-/// typoglycemia() takes a string (str) input and will scramble it according to typoglycemic rules, i.e.
-/// where the first and last character of each word or chunk remains in their position, respectively  
-/// but interior characters are randomly shuffled.
+/// typoglycemia() takes a string input and will scramble it according to  
+/// typoglycemic rules, i.e. where the first and last character of each word or  
+/// chunk remains in their position, respectively but interior characters  
+/// are randomly shuffled, e.g. "hello" => "hlelo"
 ///
 /// # Arguments
 ///
@@ -42,7 +43,7 @@ pub fn typoglycemia(s: &str) -> String {
     vec_of_scrambles.join(" ")
 }
 
-/// leet() behaves the same as typoglycemia() but will do a Leet-like substitution
+/// leet() behaves the same as typoglycemia() but will do a Leet-like substitution  
 /// for certain characters  
 // ///
 // 'A' => 'Д'

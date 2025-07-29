@@ -137,9 +137,10 @@ fn example_raven_german() {
  * $cargo test -- --show-output
  */
 fn example_gettysburg_emojies() {
-    let input = "Four score and seven years ago📜, our 🧓fathers brought \
-    forth on this continent a new nation, conceived in Liberty, and dedicated to the \
-    proposition that all men are created equal. 🇺🇸";
+    // let input = "Four score and seven years ago📜, our 🧓fathers brought \
+    // forth on this continent a new nation, conceived in Liberty, and dedicated to the \
+    // proposition that all men are created equal. 🇺🇸";
+    let input = "According to a researcher at Cambridge University, it doesn't matter in what order the letters in a word are, the only important thing is that the first and last letter be at the right place. The rest can be a total mess and you can still read it without problem. This is because the human mind does not read every letter by itself, but the word as a whole.";
     let result = typoglycemia(input);
 
     println!("");

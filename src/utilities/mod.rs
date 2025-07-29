@@ -40,6 +40,28 @@ pub mod utils {
 
         ret
     }
+    /// Determines if a word contains apostrophes
+    ///
+    /// # Arguments
+    ///
+    /// - `s` (`&str`) - The input string
+    ///
+    /// # Returns
+    ///
+    /// - `bool` - Whether or not apostrophes exist
+    ///
+    fn has_apostrophes(s: &str) -> bool {
+        let g: Vec<&str> = s.graphemes(true).collect::<Vec<&str>>();
+        let mut it: std::slice::Iter<'_, &str> = g.iter();
+        let index: Option<usize> = it.position(|&r| r == "'");
+
+        let ret: bool = match index {
+            None => false,
+            _ => true,
+        };
+
+        ret
+    }
 
     /// Determines if a word contains hyphens
     ///
@@ -49,7 +71,7 @@ pub mod utils {
     ///
     /// # Returns
     ///
-    /// - `bool` - Whether or not hyphen or hyphens exist
+    /// - `bool` - Whether or not hyphens exist
     ///
     fn has_hyphens(s: &str) -> bool {
         let g: Vec<&str> = s.graphemes(true).collect::<Vec<&str>>();
@@ -185,7 +207,7 @@ pub mod utils {
         }
 
         if has_hyphens(&s) {
-            let hyphens_handled = handle_hyphenated_string(&s);
+            let hyphens_handled: String = handle_hyphenated_string(&s);
             return hyphens_handled;
         }
 
@@ -256,6 +278,21 @@ pub mod utils {
 
             for (word, index) in map.iter() {
                 assert_eq!(get_valid_end_index(word, &all_valid_ascii), *index);
+            }
+        }
+
+        #[test]
+        fn validate_has_apostrophes() {
+            let lst1 = ["doesn't", "won't", "couldn't", "O'Shag-hennesey"];
+            for item in lst1.iter() {
+                let result = has_apostrophes(item);
+                assert_eq!(result, true);
+            }
+
+            let lst2 = ["foo", "bar", "baz"];
+            for item in lst2.iter() {
+                let result = has_apostrophes(item);
+                assert_eq!(result, false);
             }
         }
 
