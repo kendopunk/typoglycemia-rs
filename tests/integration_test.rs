@@ -137,10 +137,9 @@ fn example_raven_german() {
  * $cargo test -- --show-output
  */
 fn example_gettysburg_emojies() {
-    // let input = "Four score and seven years ago📜, our 🧓fathers brought \
-    // forth on this continent a new nation, conceived in Liberty, and dedicated to the \
-    // proposition that all men are created equal. 🇺🇸";
-    let input = "According to a researcher at Cambridge University, it doesn't matter in what order the letters in a word are, the only important thing is that the first and last letter be at the right place. The rest can be a total mess and you can still read it without problem. This is because the human mind does not read every letter by itself, but the word as a whole.";
+    let input = "Four score and seven years ago📜, our 🧓fathers brought \
+    forth on this continent a new nation, conceived in Liberty, and dedicated to the \
+    proposition that all men are created equal. 🇺🇸";
     let result = typoglycemia(input);
 
     println!("");
@@ -159,16 +158,18 @@ fn example_gettysburg_emojies() {
  * Leet output, The Raven by E.A. Poe (English)
  * $cargo test -- --show-output
  */
-fn example_raven_leet() {
-    let input = "Once upon a midnight dreary, while I pondered, weak and weary, \
-    Over many a quaint and curious volume of forgotten lore, \
-    While I nodded, nearly napping, suddenly there came a tapping, \
-    As of some one gently rapping, rapping at my chamber door.";
+fn example_leet() {
+    let input = "Leet-speak is a mixture of words (mostly computer-related \
+    jargon) spelled incorrectly intentionally*, usually coming from typographical errors \
+    (e.g. the becomes t3h). The words of Leet-speak are usually put together to create a \
+    dialect (small language). This dialect is used in some places for funniness. Leet-speak \
+    uses numbers, ASCII symbols, and diacritics together to make symbols that look like \
+    Latin letters.";
     let result = leet(input);
 
     println!("");
     println!("{}", "*".repeat(40));
-    println!("Integration test example ouput: example_raven_leet()");
+    println!("Integration test example ouput: example_leet()");
     println!("{}", "*".repeat(40));
     println!("Original:\n");
     println!("{}", input);
