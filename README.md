@@ -24,6 +24,7 @@ itself, but the word as a whole._"
 - Standard Typoglycemia functionality, e.g.
   - "Once upon a midnight dreary, while I pondered, weak and weary" => "Ocne upon a mnihdigt derray, wilhe I pernoedd, waek and wraey"<br><br>
 - Leet-speak function for added complexity, e.g.
+  - Only a small subset of Leet substitutions, see lib.rs
   - "Once upon a midnight dreary, while I pondered, weak and weary" => "0cn3 upon a mgd1hn1t dr3ary, whl13 1 podn33rd, wa3k and w3ray"<br><br>
 - Hyphenated words will retain their hyphen positions, e.g.
   - "Spanish-speaking country" => "Spsniah-siapenkg cnoruty"<br><br>
