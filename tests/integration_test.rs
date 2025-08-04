@@ -1,4 +1,4 @@
-use typoglycemia::{leet, typoglycemia};
+use typoglycemia::{typoglycemia, typoglycemia_leet};
 use unicode_segmentation::UnicodeSegmentation;
 
 #[cfg(test)]
@@ -158,18 +158,18 @@ fn example_gettysburg_emojies() {
  * Leet output
  * $cargo test -- --show-output
  */
-fn example_leet() {
+fn example_typoglycemia_leet() {
     let input = "Leet-speak is a mixture of words (mostly computer-related \
     jargon) spelled incorrectly intentionally*, usually coming from typographical errors \
     (e.g. the becomes t3h). The words of Leet-speak are usually put together to create a \
     dialect (small language). This dialect is used in some places for funniness. Leet-speak \
     uses numbers, ASCII symbols, and diacritics together to make symbols that look like \
     Latin letters.";
-    let result = leet(input);
+    let result = typoglycemia_leet(input);
 
     println!("");
     println!("{}", "*".repeat(40));
-    println!("Integration test example ouput: example_leet()");
+    println!("Integration test example ouput: example_typoglycemia_leet()");
     println!("{}", "*".repeat(40));
     println!("Original:\n");
     println!("{}", input);

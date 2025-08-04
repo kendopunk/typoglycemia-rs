@@ -43,7 +43,7 @@ pub fn typoglycemia(s: &str) -> String {
     vec_of_scrambles.join(" ")
 }
 
-/// leet() behaves the same as typoglycemia() but will do a Leet-like substitution  
+/// typoglycemia_leet() behaves the same as typoglycemia() but will do a Leet-like substitution  
 /// for certain characters  
 ///
 /// 'A' => 'Д'  
@@ -69,8 +69,8 @@ pub fn typoglycemia(s: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use typoglycemia::leet;
-/// let result = leet("Real Leet");
+/// use typoglycemia::typoglycemia_leet;
+/// let result = typoglycemia_leet("Real Leet");
 /// let parts: Vec<&str> = result.split_whitespace().collect();
 ///
 /// let v1 = vec!["Я3al", "Яa3l"];
@@ -83,7 +83,7 @@ pub fn typoglycemia(s: &str) -> String {
 /// assert!(v2.contains(second_scrambled_word));
 ///
 /// ```
-pub fn leet(s: &str) -> String {
+pub fn typoglycemia_leet(s: &str) -> String {
     let tg: String = typoglycemia(s);
 
     tg.chars()

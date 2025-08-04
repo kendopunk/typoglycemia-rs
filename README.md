@@ -4,7 +4,7 @@ Typoglycemia implementation for Rust, with a Leet-speak option.
 
 ## Background
 
-The phenomenon known as typoglycemia, is the ability to understand words when the first and last letters are stable, but the intermediate letters are scrambled. Your brain puts the letters back into a sequence again.
+The phenomenon known as typoglycemia describes the (unproven) cognitive ability to read a word when the first and last letters are stable, but the intermediate letters are scrambled.
 
 "Adncocrig to a rcheeasrer at Cdmgrbaie Usirveinty, it donse't metatr in waht oerdr  
 the ltertes in a wrod are, the olny itapmrnot tinhg is that the frsit and last  
@@ -37,6 +37,33 @@ itself, but the word as a whole._"
   - "a", "the", "and", "but", "or", "for", "a", "I❤️", etc.
 
 ## Usage
+
+```
+use typoglycemia::{leet, typoglycemia};
+
+fn main() {
+    let s = "It was the best of times, it was the worst of times, \
+    it was the age of wisdom, it was the age of foolishness, it was the epoch of \
+    belief, it was the epoch of incredulity, it was the season of Light, it was \
+    the season of Darkness, it was the spring of hope, it was the winter of despair...";
+
+    let t = typoglycemia(s);
+    let l = typoglycemia_leet(s);
+
+    println!("{}", t);
+    println!("{}", l);
+
+    // It was the bset of tiems, it was the wrsot of tiems,
+    // it was the age of wdsiom, it was the age of fssenohilos, it was the epoch of
+    // beelif, it was the epoch of iledruicnty, it was the seosan of Lhgit, it was
+    // the saeosn of Dnaserks, it was the sinprg of hpoe, it was the wtiner of dpaiser...
+
+    // 1t was th3 83st of tm31s, 1t was th3 wrsot of tm31s,
+    // 1t was th3 ag3 of wdo1sm, 1t was th3 ag3 of fsoslhon31s, 1t was th3 3ocph of
+    // 83l13f, 1t was th3 3poch of 13c1ltrdnuy, 1t was th3 soas3n of Lhg1t, 1t was
+    // th3 soa3sn of Dkr3nass, 1t was th3 snpr1g of hpo3, 1t was th3 w1n3tr of d1p3asr...
+}
+```
 
 ## References
 
