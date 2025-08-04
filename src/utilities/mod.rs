@@ -42,18 +42,18 @@ pub mod utils {
         [zero_to_nine, ucase_az, lcase_az, latin1, latin2, misc_chars].concat()
     }
 
-    /// Returns the index of the last allowable ASCII character in a word
+    /// Returns the index of the last allowable ASCII character in a word, per the allowance configuration  
     ///
     /// # Arguments
     ///
     /// - `s` (`&str`) - The input string
-    /// - `valid_chars` (`&Vec<usize>`) - vector comprised of usize valid ASCII characters
+    /// - `valid_chars` (`&[usize]`) - usize array of valid ASCII characters
     ///
     /// # Returns
     ///
     /// - `usize` - The first valid start index
     ///
-    fn get_valid_end_index(s: &str, valid_chars: &Vec<usize>) -> usize {
+    fn get_valid_end_index(s: &str, valid_chars: &[usize]) -> usize {
         let mut ret: usize = 0;
         let trimmed: &str = s.trim();
 
@@ -71,17 +71,17 @@ pub mod utils {
         g.len() - ret - 1
     }
 
-    /// Returns the index of the first allowable ASCII character in a word
+    /// Returns the index of the first allowable ASCII character in a word, per the allowance configuration  
     ///
     /// # Arguments
     ///
     /// - `s` (`&str`) - The input string
-    /// - `valid_chars` (`&Vec<usize>`) - vector comprisesd of usize valid ASCII characters
+    /// - `valid_chars` (`&[usize]`) - vector comprisesd of usize valid ASCII characters
     ///
     /// # Returns
     ///
     /// - `usize` - The first valid start index
-    fn get_valid_start_index(s: &str, valid_chars: &Vec<usize>) -> usize {
+    fn get_valid_start_index(s: &str, valid_chars: &[usize]) -> usize {
         let mut ret: usize = 0;
         let trimmed: &str = s.trim();
 
@@ -114,12 +114,7 @@ pub mod utils {
         let mut it: std::slice::Iter<'_, &str> = g.iter();
         let index: Option<usize> = it.position(|&r| r == "'");
 
-        let ret: bool = match index {
-            None => false,
-            _ => true,
-        };
-
-        ret
+        index.is_some()
     }
 
     /// Determines if a word contains hyphens
@@ -137,12 +132,7 @@ pub mod utils {
         let mut it: std::slice::Iter<'_, &str> = g.iter();
         let index: Option<usize> = it.position(|&r| r == "-");
 
-        let ret: bool = match index {
-            None => false,
-            _ => true,
-        };
-
-        ret
+        index.is_some()
     }
 
     /// Each part of the word between apostrophes will be typoglycemified and rejoined with an apostrophe, e.g.  
@@ -222,12 +212,7 @@ pub mod utils {
     fn is_numeric_string(s: &str) -> bool {
         let atoi_str: Option<u64> = atoi::<u64>(s.as_bytes());
 
-        let ret: bool = match atoi_str {
-            None => false,
-            _ => true,
-        };
-
-        ret
+        atoi_str.is_some()
     }
 
     /// "scramble_word" is the primary typoglycemic function of this crate and
@@ -382,6 +367,45 @@ pub mod utils {
         }
 
         #[test]
+        fn test_double_apostrophe_string() {
+            let s: &'static str = "woulda'coulda'shoulda";
+            let result: String = handle_apostrophe_string(s);
+            let parts: Vec<&str> = result.split("'").collect();
+
+            let first_word: &&str = parts.get(0).unwrap();
+            let first_word_grapheme: Vec<&str> = first_word.graphemes(true).collect::<Vec<&str>>();
+
+            let second_word: &&str = parts.get(1).unwrap();
+            let second_word_grapheme: Vec<&str> =
+                second_word.graphemes(true).collect::<Vec<&str>>();
+
+            let third_word: &&str = parts.get(2).unwrap();
+            let third_word_grapheme: Vec<&str> = third_word.graphemes(true).collect::<Vec<&str>>();
+
+            let first_word_first_char: &str = *first_word_grapheme.get(0).unwrap();
+            let first_word_last_char: &str = *first_word_grapheme
+                .get(first_word_grapheme.len() - 1)
+                .unwrap();
+
+            let second_word_first_char: &str = *second_word_grapheme.get(0).unwrap();
+            let second_word_last_char: &str = *second_word_grapheme
+                .get(second_word_grapheme.len() - 1)
+                .unwrap();
+
+            let third_word_first_char: &str = *third_word_grapheme.get(0).unwrap();
+            let third_word_last_char: &str = *third_word_grapheme
+                .get(third_word_grapheme.len() - 1)
+                .unwrap();
+
+            assert_eq!(first_word_first_char, "w"); // (w)oulda
+            assert_eq!(first_word_last_char, "a"); // would(a)
+            assert_eq!(second_word_first_char, "c"); // (c)oulda
+            assert_eq!(second_word_last_char, "a"); // could(a)
+            assert_eq!(third_word_first_char, "s"); // (s)houlda
+            assert_eq!(third_word_last_char, "a"); // should(a)
+        }
+
+        #[test]
         fn test_has_hyphens() {
             let lst1 = ["Spanish-speaking", "all-or-nothing", "dipsy-doo-dunkaroo"];
             for item in lst1.iter() {
@@ -389,7 +413,7 @@ pub mod utils {
                 assert_eq!(result, true);
             }
 
-            let lst2 = ["foo", "bar", "baz"];
+            let lst2 = ["Spanish", "all", "dipsy"];
             for item in lst2.iter() {
                 let result = has_hyphens(item);
                 assert_eq!(result, false);
@@ -410,10 +434,19 @@ pub mod utils {
                 second_word.graphemes(true).collect::<Vec<&str>>();
 
             let first_word_first_char: &str = *first_word_grapheme.get(0).unwrap();
+            let first_word_last_char: &str = *first_word_grapheme
+                .get(first_word_grapheme.len() - 1)
+                .unwrap();
+
             let second_word_first_char: &str = *second_word_grapheme.get(0).unwrap();
+            let second_word_last_char: &str = *second_word_grapheme
+                .get(second_word_grapheme.len() - 1)
+                .unwrap();
 
             assert_eq!(first_word_first_char, "n");
+            assert_eq!(first_word_last_char, "y");
             assert_eq!(second_word_first_char, "g");
+            assert_eq!(second_word_last_char, "y");
         }
 
         #[test]

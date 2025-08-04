@@ -34,7 +34,7 @@ use crate::utilities::utils::scramble_word;
 ///
 /// ```
 pub fn typoglycemia(s: &str) -> String {
-    let tokens: Vec<&str> = s.trim().split_whitespace().collect();
+    let tokens: Vec<&str> = s.split_whitespace().collect();
     let mut vec_of_scrambles: Vec<String> = Vec::new();
 
     for tok in tokens.iter() {
@@ -45,19 +45,18 @@ pub fn typoglycemia(s: &str) -> String {
 
 /// leet() behaves the same as typoglycemia() but will do a Leet-like substitution  
 /// for certain characters  
-// ///
-// 'A' => 'Д'
-// 'B' | 'b' => '8'
-// 'E' | 'e' => '3'
-// 'I' | 'i' => '1'
-// 'O' => '0'
-// 'R' => 'Я'
-// 'T' => '†'
-// 'V' | 'v' => '√'
-// 'W' => 'Ш'
-// '0' => 'O'
-// '2' => 'Z'
-// '3' => 'E'
+///
+/// 'A' => 'Д'  
+/// 'B' | 'b' => '8'  
+/// 'E' | 'e' => '3'  
+/// 'I' | 'i' => '1'  
+/// 'O' => '0'  
+/// 'R' => 'Я'  
+/// 'T' => '†'  
+/// 'V' | 'v' => '√'  
+/// 'W' => 'Ш'  
+/// '0' => 'O'  
+/// '2' => 'Z'  
 ///
 /// # Arguments
 ///
@@ -100,7 +99,6 @@ pub fn leet(s: &str) -> String {
             'W' => 'Ш',
             '0' => 'O',
             '2' => 'Z',
-            '3' => 'E',
             _ => x,
         })
         .collect()

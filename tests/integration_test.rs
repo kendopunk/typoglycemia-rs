@@ -155,7 +155,7 @@ fn example_gettysburg_emojies() {
 
 #[test]
 /**
- * Leet output, The Raven by E.A. Poe (English)
+ * Leet output
  * $cargo test -- --show-output
  */
 fn example_leet() {
