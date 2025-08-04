@@ -69,7 +69,7 @@ fn it_ignores_beginning_and_ending_non_ascii() {
  * Example output, The Raven by E.A. Poe (English)
  * $cargo test -- --show-output
  */
-fn example_raven_english() {
+fn poe_the_raven_english() {
     let input: &'static str = "Once upon a midnight dreary, while I pondered, weak and weary, \
     Over many a quaint and curious volume of forgotten lore, \
     While I nodded, nearly napping, suddenly there came a tapping, \
@@ -78,7 +78,7 @@ fn example_raven_english() {
 
     println!("");
     println!("{}", "*".repeat(40));
-    println!("Integration test example ouput: example_raven_english()");
+    println!("Integration test example ouput: poe_the_raven_english()");
     println!("{}", "*".repeat(40));
     println!("Original:\n");
     println!("{}", input);
@@ -92,7 +92,7 @@ fn example_raven_english() {
  * Example output, The Raven by E.A. Poe (French)
  * $cargo test -- --show-output
  */
-fn example_raven_french() {
+fn poe_the_raven_french() {
     let input = "Jadis, par une minuit lugubre, tandis que je pensais, faible et las, à maints \
     grimoires oubliés, et que je hochais la tête, presque endormi, soudain il se fit un heurt, \
     comme de quelqu'un qui frapperait doucement, frappant à la porte de ma chambre";
@@ -100,7 +100,7 @@ fn example_raven_french() {
 
     println!("");
     println!("{}", "*".repeat(40));
-    println!("Integration test example ouput: example_raven_french()");
+    println!("Integration test example ouput: poe_the_raven_french()");
     println!("{}", "*".repeat(40));
     println!("Original:\n");
     println!("{}", input);
@@ -114,7 +114,7 @@ fn example_raven_french() {
  * Example output, The Raven by E.A. Poe (English)
  * $cargo test -- --show-output
  */
-fn example_raven_german() {
+fn poe_the_raven_german() {
     let input = "Einst in einer Mittnacht schaurig, als ich in entschwundner Kunde wunderlicher Bücher forschte, \
     bis mein Geist die Kraft verlor, und mir's trübe ward im Kopfe, kam mir's plötzlich vor, als klopfe, \
     jemand leis ans Tor, als klopfe - klopfe jemand sacht ans Tor.";
@@ -122,7 +122,7 @@ fn example_raven_german() {
 
     println!("");
     println!("{}", "*".repeat(40));
-    println!("Integration test example ouput: example_raven_german()");
+    println!("Integration test example ouput: poe_the_raven_german()");
     println!("{}", "*".repeat(40));
     println!("Original:\n");
     println!("{}", input);
@@ -136,7 +136,7 @@ fn example_raven_german() {
  * Example output, The Gettysburg Address with emojis
  * $cargo test -- --show-output
  */
-fn example_gettysburg_emojies() {
+fn gettysburg_address_with_emojis() {
     let input = "Four score and seven years ago📜, our 🧓fathers brought \
     forth on this continent a new nation, conceived in Liberty, and dedicated to the \
     proposition that all men are created equal. 🇺🇸";
@@ -144,7 +144,7 @@ fn example_gettysburg_emojies() {
 
     println!("");
     println!("{}", "*".repeat(40));
-    println!("Integration test example ouput: example_gettysburg_emojis()");
+    println!("Integration test example ouput: gettysburg_address_with_emojis");
     println!("{}", "*".repeat(40));
     println!("Original:\n");
     println!("{}", input);
@@ -158,7 +158,7 @@ fn example_gettysburg_emojies() {
  * Leet output
  * $cargo test -- --show-output
  */
-fn example_typoglycemia_leet() {
+fn typoglycemia_leet_test() {
     let input = "Leet-speak is a mixture of words (mostly computer-related \
     jargon) spelled incorrectly intentionally*, usually coming from typographical errors \
     (e.g. the becomes t3h). The words of Leet-speak are usually put together to create a \
@@ -169,7 +169,7 @@ fn example_typoglycemia_leet() {
 
     println!("");
     println!("{}", "*".repeat(40));
-    println!("Integration test example ouput: example_typoglycemia_leet()");
+    println!("Integration test example ouput: typoglycemia_leet_test()");
     println!("{}", "*".repeat(40));
     println!("Original:\n");
     println!("{}", input);

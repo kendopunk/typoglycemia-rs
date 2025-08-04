@@ -48,21 +48,44 @@ fn main() {
     the season of Darkness, it was the spring of hope, it was the winter of despair...";
 
     let t = typoglycemia(s);
-    let l = typoglycemia_leet(s);
-
     println!("{}", t);
-    println!("{}", l);
 
     // It was the bset of tiems, it was the wrsot of tiems,
     // it was the age of wdsiom, it was the age of fssenohilos, it was the epoch of
     // beelif, it was the epoch of iledruicnty, it was the seosan of Lhgit, it was
     // the saeosn of Dnaserks, it was the sinprg of hpoe, it was the wtiner of dpaiser...
 
+    let l = typoglycemia_leet(s);
+    println!("{}", l);
+
     // 1t was th3 83st of tm31s, 1t was th3 wrsot of tm31s,
     // 1t was th3 ag3 of wdo1sm, 1t was th3 ag3 of fsoslhon31s, 1t was th3 3ocph of
     // 83l13f, 1t was th3 3poch of 13c1ltrdnuy, 1t was th3 soas3n of Lhg1t, 1t was
     // th3 soa3sn of Dkr3nass, 1t was th3 snpr1g of hpo3, 1t was th3 w1n3tr of d1p3asr...
+
+    let e = typoglycemia(
+        "Emojis can convey emotions that might be difficult to express \
+    through text alone. For example, a smiley face 😊 can show happiness, while a \
+    sad face 😞 can express sadness. Emojis can also emphasize certain words or \
+    phrases. For example, using a thumbs-up emoji👍 after a positive statement can \
+    reinforce the message. It's best to use emojis sparingly to avoid overwhelming \
+    the reader and maintain clarity.",
+    );
+    println!("{}", e);
+
+    // Emijos can cvnoey enitooms taht mhigt be dciulfift to eseprxs tourhgh text anole.
+    // For eamplxe, a simely fcae 😊 can sohw hnpaesips, wihle a sad fcae 😞 can epexrss
+    // sasneds. Eojmis can aslo eihmazspe ciaertn wdros or psrheas. For expmlae, using a
+    // tubmhs-up emjoi👍 after a pvtiiose statenemt can rencrfoie the mgsasee. It's bset
+    // to use eiomjs srpgliany to aovid oeenwlvrmhig the reedar and miaiatnn cialrty.
 }
+```
+
+## Docs/Testing
+
+```sh
+$> cargo doc --no-deps --document-private-items
+$> cargo test -- --show-output # display some examples
 ```
 
 ## References
