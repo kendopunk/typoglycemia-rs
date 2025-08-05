@@ -235,8 +235,8 @@ pub mod utils {
         // get the graphemes
         let g: Vec<&str> = input_as_str.graphemes(true).collect::<Vec<&str>>();
 
-        // (grapheme length <= 3 or > 20) or numeric then return as-is
-        if g.len() <= 3 || g.len() > 20 || is_numeric_string(s.as_str()) {
+        // (grapheme length <= 3 or > 15) or numeric then return as-is
+        if g.len() <= 3 || g.len() > 15 || is_numeric_string(s.as_str()) {
             return s;
         }
 
@@ -501,7 +501,7 @@ pub mod utils {
         }
 
         #[test]
-        fn test_scramble_short_words() {
+        fn test_dont_scramble_short_words() {
             let mut map: std::collections::HashMap<String, String> =
                 std::collections::HashMap::new();
             map.insert(String::from(""), String::from(""));
@@ -510,9 +510,31 @@ pub mod utils {
             map.insert(String::from("for"), String::from("for"));
             map.insert(String::from("and"), String::from("and"));
             map.insert(String::from("12/22/1986"), String::from("12/22/1986"));
+
+            for (word, matcher) in map.iter() {
+                assert_eq!(scramble_word(word.to_string()), matcher.to_string());
+            }
+        }
+
+        #[test]
+        fn test_dont_scramble_long_words() {
+            let mut map: std::collections::HashMap<String, String> =
+                std::collections::HashMap::new();
             map.insert(
-                String::from("Antidisestablishmentarianism"),
-                String::from("Antidisestablishmentarianism"),
+                String::from("antidisestablishmentarianism"),
+                String::from("antidisestablishmentarianism"),
+            );
+            map.insert(
+                String::from("anthropomorphism"),
+                String::from("anthropomorphism"),
+            );
+            map.insert(
+                String::from("unconstitutional"),
+                String::from("unconstitutional"),
+            );
+            map.insert(
+                String::from("multidimensional"),
+                String::from("multidimensional"),
             );
 
             for (word, matcher) in map.iter() {

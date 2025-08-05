@@ -1,6 +1,6 @@
 # typoglycemia-rs
 
-Typoglycemia implementation for Rust, with a Leet-speak option.
+Typoglycemia implementation for Rust, with a Leet-speak variant.
 
 ## Background
 
@@ -30,16 +30,16 @@ itself, but the word as a whole._"
   - "Spanish-speaking country" => "Spsniah-siapenkg cnoruty"<br><br>
 - Same with apostrophes
   - "I wouldn't or I wouldn't've" => "I wulodn't or I wludon't've"<br><br>
-- For clarify, words beginning with a numeric character, e.g. date, time, colloquialisms, will not be typoglycemified:
+- For clarity, words beginning with a numeric character, e.g. date, time, colloquialisms, will not be typoglycemified:
   - "12/22/1986" => no change.
   - "1-for-all" => no change.<br><br>
-- Words with grapheme length <= 3 or > 20 will also not be typoglycemified
-  - "a", "the", "and", "but", "or", "for", "a", "I❤️", etc.
+- Words with grapheme length <= 3 or > 15 will also not be typoglycemified
+  - "a", "the", "and", "but", "or", "for", "a", "I❤️", "antidisestablishmentarianism", etc.
 
 ## Usage
 
 ```
-use typoglycemia::{leet, typoglycemia};
+use typoglycemia::{typoglycemia, typoglycemia_leet};
 
 fn main() {
     let s = "It was the best of times, it was the worst of times, \
