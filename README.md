@@ -55,7 +55,7 @@ fn main() {
     // beelif, it was the epoch of iledruicnty, it was the seosan of Lhgit, it was
     // the saeosn of Dnaserks, it was the sinprg of hpoe, it was the wtiner of dpaiser...
 
-    let l = typoglycemia_leet(s);
+    let l = typoglycemia_leet(s, 1);
     println!("{}", l);
 
     // 1t was th3 83st of tm31s, 1t was th3 wrsot of tm31s,

@@ -75,7 +75,6 @@ fn poe_the_raven_english() {
     While I nodded, nearly napping, suddenly there came a tapping, \
     As of some one gently rapping, rapping at my chamber door.";
     let result: String = typoglycemia(input);
-
     println!("");
     println!("{}", "*".repeat(40));
     println!("Integration test example ouput: poe_the_raven_english()");
@@ -165,7 +164,7 @@ fn typoglycemia_leet_test() {
     dialect (small language). This dialect is used in some places for funniness. Leet-speak \
     uses numbers, ASCII symbols, and diacritics together to make symbols that look like \
     Latin letters.";
-    let result = typoglycemia_leet(input);
+    let result = typoglycemia_leet(input, 1);
 
     println!("");
     println!("{}", "*".repeat(40));

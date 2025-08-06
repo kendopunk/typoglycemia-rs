@@ -43,24 +43,34 @@ pub fn typoglycemia(s: &str) -> String {
     vec_of_scrambles.join(" ")
 }
 
-/// typoglycemia_leet() behaves the same as typoglycemia() but will do a Leet-like substitution  
-/// for certain characters  
+/// typoglycemia_leet() behaves the same as typoglycemia() but will do a  
+/// Leet-like substitution for certain characters, depending on the  
+/// level chosen.
 ///
+/// Examples:  
 /// 'A' => 'Д'  
 /// 'B' | 'b' => '8'  
-/// 'E' | 'e' => '3'  
+/// 'c' => '¢'  
+/// 'E' => '€'  
+/// 'e' => '3'  
+/// 'H' => 'н'  
 /// 'I' | 'i' => '1'  
+/// 'M' => 'м'  
+/// 'N' => 'И'  
+/// 'n' => 'и'  
 /// 'O' => '0'  
 /// 'R' => 'Я'  
-/// 'T' => '†'  
-/// 'V' | 'v' => '√'  
+/// 'S' | 's' => '$'  
+/// 'v' => '√'  
 /// 'W' => 'Ш'  
+/// 'Y' | 'y' => 'Ч'  
 /// '0' => 'O'  
-/// '2' => 'Z'  
+///
 ///
 /// # Arguments
 ///
 /// - `s` (`&str`) - The input string or sentence
+/// - `level` (`u8`) - 1-3: Transliteration level with 1 being the most human readable
 ///
 /// # Returns
 ///
@@ -70,36 +80,80 @@ pub fn typoglycemia(s: &str) -> String {
 ///
 /// ```
 /// use typoglycemia::typoglycemia_leet;
-/// let result = typoglycemia_leet("Real Leet");
-/// let parts: Vec<&str> = result.split_whitespace().collect();
+/// let result = typoglycemia_leet("Rover", 1);
+/// println!("{}", result);
 ///
-/// let v1 = vec!["Я3al", "Яa3l"];
-/// let v2 = vec!["L33t"];
+/// let v1 = vec![
+/// String::from("Яo√er"),
+/// String::from("Яoe√r"),
+/// String::from("Я√eor"),
+/// String::from("Я√oer"),
+/// String::from("Яeo√r"),
+/// String::from("Яe√or")
+/// ];
 ///
-/// let first_scrambled_word = parts.get(0).unwrap();
-/// let second_scrambled_word = parts.get(1).unwrap();
+/// assert!(v1.contains(&result));
 ///
-/// assert!(v1.contains(first_scrambled_word));
-/// assert!(v2.contains(second_scrambled_word));
-///
-/// ```
-pub fn typoglycemia_leet(s: &str) -> String {
+pub fn typoglycemia_leet(s: &str, level: u8) -> String {
     let tg: String = typoglycemia(s);
 
-    tg.chars()
-        .map(|x| match x {
-            'A' => 'Д',
-            'B' | 'b' => '8',
-            'E' | 'e' => '3',
-            'I' | 'i' => '1',
-            'O' => '0',
-            'R' => 'Я',
-            'T' => '†',
-            'V' | 'v' => '√',
-            'W' => 'Ш',
-            '0' => 'O',
-            '2' => 'Z',
-            _ => x,
-        })
-        .collect()
+    if level == 3 {
+        return tg
+            .chars()
+            .map(|x| match x {
+                'A' => 'Д',
+                'B' | 'b' => '8',
+                'c' => '¢',
+                'E' => '€',
+                'e' => '3',
+                'H' => 'н',
+                'I' | 'i' => '1',
+                'M' => 'м',
+                'N' => 'И',
+                'n' => 'и',
+                'O' => '0',
+                'R' => 'Я',
+                'S' | 's' => '$',
+                'v' => '√',
+                'W' => 'Ш',
+                'Y' | 'y' => 'Ч',
+                '0' => 'O',
+                _ => x,
+            })
+            .collect();
+    } else if level == 2 {
+        return tg
+            .chars()
+            .map(|x| match x {
+                'A' => 'Д',
+                'B' | 'b' => '8',
+                'E' | 'e' => '3',
+                'I' | 'i' => '1',
+                'N' => 'И',
+                'n' => 'и',
+                'O' => '0',
+                'R' => 'Я',
+                'S' => '$',
+                'v' => '√',
+                'W' => 'Ш',
+                '0' => 'O',
+                _ => x,
+            })
+            .collect();
+    } else {
+        return tg
+            .chars()
+            .map(|x| match x {
+                'A' => 'Д',
+                'B' => '8',
+                'i' => '1',
+                'O' => '0',
+                'R' => 'Я',
+                'v' => '√',
+                'W' => 'Ш',
+                '0' => 'O',
+                _ => x,
+            })
+            .collect();
+    }
 }

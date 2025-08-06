@@ -136,7 +136,7 @@ pub mod utils {
     }
 
     /// Each part of the word between apostrophes will be typoglycemified and rejoined with an apostrophe, e.g.  
-    /// "Spanish-speaking" => "Sanipsh-spkeanig"
+    /// "Principal O'Shag'Hennessey" => "Pirncaipl O'Shag'Hesnneesy" // Mr. Garvey
     ///
     /// # Arguments
     ///
@@ -215,8 +215,8 @@ pub mod utils {
         atoi_str.is_some()
     }
 
-    /// "scramble_word" is the primary typoglycemic function of this crate and
-    /// will take text input and typoglycemify it
+    /// The primary typoglycemic function of this crate.  
+    /// Takes text input and typoglycemifies it.
     ///
     /// # Examples
     ///
@@ -235,10 +235,10 @@ pub mod utils {
         // get the graphemes
         let g: Vec<&str> = input_as_str.graphemes(true).collect::<Vec<&str>>();
 
-        // (grapheme length <= 3 or > 15) or numeric then return as-is
-        if g.len() <= 3 || g.len() > 15 || is_numeric_string(s.as_str()) {
-            return s;
-        }
+        // // (grapheme length <= 3 or > 15) or numeric then return as-is
+        // if g.len() <= 3 || g.len() > 15 || is_numeric_string(s.as_str()) {
+        //     return s;
+        // }
 
         if has_apostrophes(&s) && has_hyphens(&s) {
             return handle_apostrophe_and_hyphenated_string(&s);
@@ -250,6 +250,11 @@ pub mod utils {
 
         if has_hyphens(&s) {
             return handle_hyphenated_string(&s);
+        }
+
+        // (grapheme length <= 3 or > 15) or numeric then return as-is
+        if g.len() <= 3 || g.len() > 15 || is_numeric_string(s.as_str()) {
+            return s;
         }
 
         let start_index = get_valid_start_index(input_as_str, &valid_chars);
