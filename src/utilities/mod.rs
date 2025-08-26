@@ -1,20 +1,19 @@
-#![allow(dead_code)]
 use std::ops::Range;
 
 ///  ASCII O-9
-const ZERO_TO_NINE: Range<i32> = 48..57;
+const ZERO_TO_NINE: Range<usize> = 48..57;
 
 /// ASCII A - Z
-const UCASE_AZ: Range<i32> = 65..91;
+const UCASE_AZ: Range<usize> = 65..91;
 
 /// ASCII a - z
-const LCASE_AZ: Range<i32> = 97..123;
+const LCASE_AZ: Range<usize> = 97..123;
 
 /// ASCII À - ö
-const LATIN_1: Range<i32> = 192..247;
+const LATIN_1: Range<usize> = 192..247;
 
 /// ASCII ø - ÿ
-const LATIN_2: Range<i32> = 248..246;
+const LATIN_2: Range<usize> = 248..256;
 
 /// ASCII ƒ, Š, Œ, Ž, š, œ, ž, Ÿ
 const MISC_CHARS: &[&i32] = &[&131, &138, &140, &142, &154, &156, &158, &159];
@@ -26,126 +25,35 @@ pub mod utils {
 
     use crate::utilities::{LATIN_1, LATIN_2, LCASE_AZ, MISC_CHARS, UCASE_AZ, ZERO_TO_NINE};
 
-    /// Checks if a string slice starts with a numeric character.  
-    /// Strings starting with numeric characters should be kept as-is and not typoglycemified, e.g.  
-    /// date (12/22/1986) and/or time (15:32)
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use typoglycemia::utils::is_numeric_string;
-    /// let word = "12/22/1986";
-    /// assert_eq!(is_numeric_string(word), true);
-    /// ```
-    fn is_numeric_string(s: &str) -> bool {
-        let atoi_str: Option<u64> = atoi::<u64>(s.as_bytes());
-
-        let ret: bool = match atoi_str {
-            None => false,
-            _ => true,
-        };
-
-        ret
-    }
-
-    /// Determines if a word contains hyphens
-    ///
-    /// # Arguments
-    ///
-    /// - `s` (`&str`) - The input string
-    ///
-    /// # Returns
-    ///
-    /// - `bool` - The boolean result
-    ///
-    fn has_hyphens(s: &str) -> bool {
-        let g: Vec<&str> = s.graphemes(true).collect::<Vec<&str>>();
-        let mut it: std::slice::Iter<'_, &str> = g.iter();
-        let index: Option<usize> = it.position(|&r| r == "-");
-
-        let ret: bool = match index {
-            None => false,
-            _ => true,
-        };
-
-        ret
-    }
-
-    /// Get i32 vector of valid ASCII characters
-    ///
-    /// # Returns
-    ///
-    /// - `Vec<i32>` - A vector of i32 representations of allowable ASCII codes
-    fn get_all_valid_ascii_chars_i32() -> Vec<i32> {
-        let zero_to_nine: Vec<i32> = ZERO_TO_NINE.collect();
-        let ucase_az: Vec<i32> = UCASE_AZ.collect();
-        let lcase_az: Vec<i32> = LCASE_AZ.collect();
-        let latin1: Vec<i32> = LATIN_1.collect();
-        let latin2: Vec<i32> = LATIN_2.collect();
-        let misc_chars: Vec<i32> = MISC_CHARS.iter().map(|&x| *x).collect();
-
-        [zero_to_nine, ucase_az, lcase_az, latin1, latin2, misc_chars].concat()
-    }
-
     /// Get usize vector of valid ASCII characters
     ///
     /// # Returns
     ///
-    /// - `Vec<usize>` - A vector of usize representations of allowable ASCII codes
+    /// - `Vec<usize>` - Describe the return value.
     ///
-    /// # Examples
-    ///
-    /// ```
-    /// use typoglycemia::utils::get_all_valid_ascii_chars_usize;
-    /// let chars = get_all_valid_ascii_chars_usize();
-    /// assert!(chars.len() > 0);
-    /// ```
-    fn get_all_valid_ascii_chars_usize() -> Vec<usize> {
-        get_all_valid_ascii_chars_i32()
-            .iter()
-            .map(|&e| e as usize)
-            .collect()
+    fn get_all_valid_ascii_chars() -> Vec<usize> {
+        let zero_to_nine: Vec<usize> = ZERO_TO_NINE.collect();
+        let ucase_az: Vec<usize> = UCASE_AZ.collect();
+        let lcase_az: Vec<usize> = LCASE_AZ.collect();
+        let latin1: Vec<usize> = LATIN_1.collect();
+        let latin2: Vec<usize> = LATIN_2.collect();
+        let misc_chars: Vec<usize> = MISC_CHARS.iter().map(|&x| *x as usize).collect();
+
+        [zero_to_nine, ucase_az, lcase_az, latin1, latin2, misc_chars].concat()
     }
 
-    /// Returns the index of the first allowable ASCII character from a word
+    /// Returns the index of the last allowable ASCII character in a word, per the allowance configuration  
     ///
-    /// # Examples
+    /// # Arguments
     ///
-    /// ```
-    /// use typoglycemia::utils::get_valid_start_index;
-    /// let valid_chars = typoglycemia::utils::get_all_valid_ascii_chars_usize();
-    /// let word = "__hello";
-    /// assert_eq!(typoglycemia::utils::get_valid_start_index(word, &valid_chars), 2);
-    /// ```
-    fn get_valid_start_index(s: &str, valid_chars: &Vec<usize>) -> usize {
-        let mut ret: usize = 0;
-        let trimmed: &str = s.trim();
-
-        let g: Vec<&str> = trimmed.graphemes(true).collect::<Vec<&str>>();
-
-        for (index, character) in g.iter().enumerate() {
-            let bytes: &[u8] = character.as_bytes();
-            let first_byte: usize = bytes[0] as usize;
-            if character.is_ascii() && valid_chars.contains(&first_byte) {
-                ret = index;
-                break;
-            }
-        }
-
-        ret
-    }
-
-    /// Returns the index of the last allowable ASCII character from a word
+    /// - `s` (`&str`) - The input string
+    /// - `valid_chars` (`&[usize]`) - usize array of valid ASCII characters
     ///
-    /// # Examples
+    /// # Returns
     ///
-    /// ```
-    /// use typoglycemia::utils::get_valid_end_index;
-    /// let valid_chars = typoglycemia::utils::get_all_valid_ascii_chars_usize();
-    /// let word = "hello world!";
-    /// assert_eq!(typoglycemia::utils::get_valid_end_index(word, &valid_chars), 10); // "d", not "!"
-    /// ```
-    fn get_valid_end_index(s: &str, valid_chars: &Vec<usize>) -> usize {
+    /// - `usize` - The first valid start index
+    ///
+    fn get_valid_end_index(s: &str, valid_chars: &[usize]) -> usize {
         let mut ret: usize = 0;
         let trimmed: &str = s.trim();
 
@@ -163,6 +71,91 @@ pub mod utils {
         g.len() - ret - 1
     }
 
+    /// Returns the index of the first allowable ASCII character in a word, per the allowance configuration  
+    ///
+    /// # Arguments
+    ///
+    /// - `s` (`&str`) - The input string
+    /// - `valid_chars` (`&[usize]`) - vector comprisesd of usize valid ASCII characters
+    ///
+    /// # Returns
+    ///
+    /// - `usize` - The first valid start index
+    fn get_valid_start_index(s: &str, valid_chars: &[usize]) -> usize {
+        let mut ret: usize = 0;
+        let trimmed: &str = s.trim();
+
+        let g: Vec<&str> = trimmed.graphemes(true).collect::<Vec<&str>>();
+
+        for (index, character) in g.iter().enumerate() {
+            let bytes: &[u8] = character.as_bytes();
+            let first_byte: usize = bytes[0] as usize;
+            if character.is_ascii() && valid_chars.contains(&first_byte) {
+                ret = index;
+                break;
+            }
+        }
+
+        ret
+    }
+
+    /// Determines if a word contains apostrophes
+    ///
+    /// # Arguments
+    ///
+    /// - `s` (`&str`) - The input string
+    ///
+    /// # Returns
+    ///
+    /// - `bool` - Whether or not apostrophes exist
+    ///
+    fn has_apostrophes(s: &str) -> bool {
+        let g: Vec<&str> = s.graphemes(true).collect::<Vec<&str>>();
+        let mut it: std::slice::Iter<'_, &str> = g.iter();
+        let index: Option<usize> = it.position(|&r| r == "'");
+
+        index.is_some()
+    }
+
+    /// Determines if a word contains hyphens
+    ///
+    /// # Arguments
+    ///
+    /// - `s` (`&str`) - The input string
+    ///
+    /// # Returns
+    ///
+    /// - `bool` - Whether or not hyphens exist
+    ///
+    fn has_hyphens(s: &str) -> bool {
+        let g: Vec<&str> = s.graphemes(true).collect::<Vec<&str>>();
+        let mut it: std::slice::Iter<'_, &str> = g.iter();
+        let index: Option<usize> = it.position(|&r| r == "-");
+
+        index.is_some()
+    }
+
+    /// Each part of the word between apostrophes will be typoglycemified and rejoined with an apostrophe, e.g.  
+    /// "Principal O'Shag'Hennessey" => "Pirncaipl O'Shag'Hesnneesy" // Mr. Garvey
+    ///
+    /// # Arguments
+    ///
+    /// - `s` (`&str`) - The word containing apostrophes
+    ///
+    /// # Returns
+    ///
+    /// - `String` - The modified string with portions scrambled
+    ///
+    fn handle_apostrophe_string(s: &str) -> String {
+        let mut v: Vec<String> = Vec::new();
+        let it: std::str::Split<'_, &str> = s.split("'");
+        for part in it {
+            v.push(scramble_word(part.to_owned()));
+        }
+
+        v.join("'")
+    }
+
     /// Each part of the word between the hyphens will be typoglycemified and rejoined with hyphens, e.g.  
     /// "Spanish-speaking" => "Sanipsh-spkeanig"
     ///
@@ -172,9 +165,7 @@ pub mod utils {
     ///
     /// # Returns
     ///
-    /// - `String` - The hyphenated string
-    ///
-    /// # Examples
+    /// - `String` - The re-hyphenated string with portions scrambled
     ///
     fn handle_hyphenated_string(s: &str) -> String {
         let mut coll: Vec<String> = Vec::new();
@@ -186,8 +177,46 @@ pub mod utils {
         coll.join("-")
     }
 
-    /// "scramble_word" is the primary typoglycemic function of this crate and
-    /// will take text input and typoglycemify it
+    /// Each part of the word between the apoostrophes and hyphens will be typoglycemified and rejoined e.g.  
+    /// "O'Leary-sanctioned" => "O'Lraey-sninactoed"
+    ///
+    /// # Arguments
+    ///
+    /// - `s` (`&str`) - The hyphenated word
+    ///
+    /// # Returns
+    ///
+    /// - `String` - The re-joined string
+    ///
+    fn handle_apostrophe_and_hyphenated_string(s: &str) -> String {
+        let mut v1: Vec<String> = Vec::new();
+        let mut v2: Vec<String> = Vec::new();
+
+        let it: std::str::Split<'_, &str> = s.split("-");
+        for i in it {
+            let st = i.split("'");
+            for s in st {
+                v2.push(scramble_word(s.to_owned()));
+            }
+            v1.push(v2.join("'"));
+            v2.clear();
+        }
+
+        v1.join("-")
+    }
+
+    /// Checks if a string slice starts with a numeric character.  
+    /// Strings starting with numeric characters should be kept as-is and not typoglycemified, e.g.  
+    /// date (12/22/1986) and/or time (15:32)
+    ///
+    fn is_numeric_string(s: &str) -> bool {
+        let atoi_str: Option<u64> = atoi::<u64>(s.as_bytes());
+
+        atoi_str.is_some()
+    }
+
+    /// The primary typoglycemic function of this crate.  
+    /// Takes text input and typoglycemifies it.
     ///
     /// # Examples
     ///
@@ -198,23 +227,43 @@ pub mod utils {
     /// let result = typoglycemia::utils::scramble_word(sentence);
     /// assert_eq!(result.len(), lng);
     pub fn scramble_word(s: String) -> String {
-        // <= 3, > 20 or numeric then return as-is
-        if s.len() <= 3 || s.len() > 20 || is_numeric_string(s.as_str()) {
-            return s;
+        let input_as_str: &str = s.as_str();
+
+        // vector of valid ASCII characters (usize)
+        let valid_chars: Vec<usize> = get_all_valid_ascii_chars();
+
+        // get the graphemes
+        let g: Vec<&str> = input_as_str.graphemes(true).collect::<Vec<&str>>();
+
+        // // (grapheme length <= 3 or > 15) or numeric then return as-is
+        // if g.len() <= 3 || g.len() > 15 || is_numeric_string(s.as_str()) {
+        //     return s;
+        // }
+
+        if has_apostrophes(&s) && has_hyphens(&s) {
+            return handle_apostrophe_and_hyphenated_string(&s);
+        }
+
+        if has_apostrophes(&s) {
+            return handle_apostrophe_string(&s);
         }
 
         if has_hyphens(&s) {
-            let handled = handle_hyphenated_string(&s);
-            return handled;
+            return handle_hyphenated_string(&s);
         }
 
-        // vector of valid ASCII characters (usize)
-        let valid_chars = get_all_valid_ascii_chars_usize();
+        // (grapheme length <= 3 or > 15) or numeric then return as-is
+        if g.len() <= 3 || g.len() > 15 || is_numeric_string(s.as_str()) {
+            return s;
+        }
 
-        let sasstr = s.as_str();
-        let g = sasstr.graphemes(true).collect::<Vec<&str>>();
-        let start_index = get_valid_start_index(sasstr, &valid_chars);
-        let end_index = get_valid_end_index(sasstr, &valid_chars);
+        let start_index = get_valid_start_index(input_as_str, &valid_chars);
+        let end_index = get_valid_end_index(input_as_str, &valid_chars);
+
+        // for example, this weird string w/ only one valid ascii character -> __a__
+        if start_index == end_index {
+            return s;
+        }
 
         let first = &g[0..=start_index];
         let middle = &g[start_index + 1..end_index];
@@ -233,11 +282,11 @@ pub mod utils {
     #[cfg(test)]
     mod tests {
 
-        // Import all items from the parent module (your_module)
+        // Import all items from the parent module
         use super::*;
 
         #[test]
-        fn validate_is_numeric_string() {
+        fn test_is_numeric_string() {
             let lst1 = ["hello", " ", "_123"];
             for item in lst1.iter() {
                 let result = is_numeric_string(item);
@@ -252,8 +301,8 @@ pub mod utils {
         }
 
         #[test]
-        fn validate_start_indexes() {
-            let all_valid_ascii = get_all_valid_ascii_chars_usize();
+        fn test_get_valid_start_index() {
+            let all_valid_ascii = get_all_valid_ascii_chars();
 
             let mut map: std::collections::HashMap<&'static str, usize> =
                 std::collections::HashMap::new();
@@ -268,8 +317,8 @@ pub mod utils {
         }
 
         #[test]
-        fn validate_end_indexes() {
-            let all_valid_ascii = get_all_valid_ascii_chars_usize();
+        fn test_get_valid_end_index() {
+            let all_valid_ascii = get_all_valid_ascii_chars();
 
             let mut map: std::collections::HashMap<&'static str, usize> =
                 std::collections::HashMap::new();
@@ -284,14 +333,92 @@ pub mod utils {
         }
 
         #[test]
-        fn validate_has_hyphens() {
+        fn test_has_apostrophes() {
+            let lst1 = ["doesn't", "won't", "couldn't", "O'Shag-hennesey"];
+            for item in lst1.iter() {
+                let result = has_apostrophes(item);
+                assert_eq!(result, true);
+            }
+
+            let lst2 = ["foo", "bar", "baz"];
+            for item in lst2.iter() {
+                let result = has_apostrophes(item);
+                assert_eq!(result, false);
+            }
+        }
+
+        #[test]
+        fn test_single_apostrophe_string() {
+            let s: &'static str = "O'Shaghennessy"; // Mr. Garvey
+            let result: String = handle_apostrophe_string(s);
+            let parts: Vec<&str> = result.split("'").collect();
+
+            let first_word: &&str = parts.get(0).unwrap();
+            let first_word_grapheme: Vec<&str> = first_word.graphemes(true).collect::<Vec<&str>>();
+
+            let second_word: &&str = parts.get(1).unwrap();
+            let second_word_grapheme: Vec<&str> =
+                second_word.graphemes(true).collect::<Vec<&str>>();
+
+            let first_word_first_char: &str = *first_word_grapheme.get(0).unwrap();
+            let second_word_first_char: &str = *second_word_grapheme.get(0).unwrap();
+            let second_word_last_char: &str = *second_word_grapheme
+                .get(second_word_grapheme.len() - 1)
+                .unwrap();
+
+            assert_eq!(first_word_first_char, "O");
+            assert_eq!(second_word_first_char, "S");
+            assert_eq!(second_word_last_char, "y");
+        }
+
+        #[test]
+        fn test_double_apostrophe_string() {
+            let s: &'static str = "woulda'coulda'shoulda";
+            let result: String = handle_apostrophe_string(s);
+            let parts: Vec<&str> = result.split("'").collect();
+
+            let first_word: &&str = parts.get(0).unwrap();
+            let first_word_grapheme: Vec<&str> = first_word.graphemes(true).collect::<Vec<&str>>();
+
+            let second_word: &&str = parts.get(1).unwrap();
+            let second_word_grapheme: Vec<&str> =
+                second_word.graphemes(true).collect::<Vec<&str>>();
+
+            let third_word: &&str = parts.get(2).unwrap();
+            let third_word_grapheme: Vec<&str> = third_word.graphemes(true).collect::<Vec<&str>>();
+
+            let first_word_first_char: &str = *first_word_grapheme.get(0).unwrap();
+            let first_word_last_char: &str = *first_word_grapheme
+                .get(first_word_grapheme.len() - 1)
+                .unwrap();
+
+            let second_word_first_char: &str = *second_word_grapheme.get(0).unwrap();
+            let second_word_last_char: &str = *second_word_grapheme
+                .get(second_word_grapheme.len() - 1)
+                .unwrap();
+
+            let third_word_first_char: &str = *third_word_grapheme.get(0).unwrap();
+            let third_word_last_char: &str = *third_word_grapheme
+                .get(third_word_grapheme.len() - 1)
+                .unwrap();
+
+            assert_eq!(first_word_first_char, "w"); // (w)oulda
+            assert_eq!(first_word_last_char, "a"); // would(a)
+            assert_eq!(second_word_first_char, "c"); // (c)oulda
+            assert_eq!(second_word_last_char, "a"); // could(a)
+            assert_eq!(third_word_first_char, "s"); // (s)houlda
+            assert_eq!(third_word_last_char, "a"); // should(a)
+        }
+
+        #[test]
+        fn test_has_hyphens() {
             let lst1 = ["Spanish-speaking", "all-or-nothing", "dipsy-doo-dunkaroo"];
             for item in lst1.iter() {
                 let result = has_hyphens(item);
                 assert_eq!(result, true);
             }
 
-            let lst2 = ["foo", "bar", "baz"];
+            let lst2 = ["Spanish", "all", "dipsy"];
             for item in lst2.iter() {
                 let result = has_hyphens(item);
                 assert_eq!(result, false);
@@ -312,10 +439,19 @@ pub mod utils {
                 second_word.graphemes(true).collect::<Vec<&str>>();
 
             let first_word_first_char: &str = *first_word_grapheme.get(0).unwrap();
+            let first_word_last_char: &str = *first_word_grapheme
+                .get(first_word_grapheme.len() - 1)
+                .unwrap();
+
             let second_word_first_char: &str = *second_word_grapheme.get(0).unwrap();
+            let second_word_last_char: &str = *second_word_grapheme
+                .get(second_word_grapheme.len() - 1)
+                .unwrap();
 
             assert_eq!(first_word_first_char, "n");
+            assert_eq!(first_word_last_char, "y");
             assert_eq!(second_word_first_char, "g");
+            assert_eq!(second_word_last_char, "y");
         }
 
         #[test]
@@ -370,7 +506,7 @@ pub mod utils {
         }
 
         #[test]
-        fn scramble_short_words() {
+        fn test_dont_scramble_short_words() {
             let mut map: std::collections::HashMap<String, String> =
                 std::collections::HashMap::new();
             map.insert(String::from(""), String::from(""));
@@ -379,10 +515,47 @@ pub mod utils {
             map.insert(String::from("for"), String::from("for"));
             map.insert(String::from("and"), String::from("and"));
             map.insert(String::from("12/22/1986"), String::from("12/22/1986"));
+
+            for (word, matcher) in map.iter() {
+                assert_eq!(scramble_word(word.to_string()), matcher.to_string());
+            }
+        }
+
+        #[test]
+        fn test_dont_scramble_long_words() {
+            let mut map: std::collections::HashMap<String, String> =
+                std::collections::HashMap::new();
             map.insert(
-                String::from("Antidisestablishmentarianism"),
-                String::from("Antidisestablishmentarianism"),
+                String::from("antidisestablishmentarianism"),
+                String::from("antidisestablishmentarianism"),
             );
+            map.insert(
+                String::from("anthropomorphism"),
+                String::from("anthropomorphism"),
+            );
+            map.insert(
+                String::from("unconstitutional"),
+                String::from("unconstitutional"),
+            );
+            map.insert(
+                String::from("multidimensional"),
+                String::from("multidimensional"),
+            );
+
+            for (word, matcher) in map.iter() {
+                assert_eq!(scramble_word(word.to_string()), matcher.to_string());
+            }
+        }
+
+        #[test]
+        fn test_one_valid_ascii_char() {
+            let mut map: std::collections::HashMap<String, String> =
+                std::collections::HashMap::new();
+            map.insert(String::from("_a"), String::from("_a"));
+            map.insert(String::from("a_"), String::from("a_"));
+            map.insert(String::from("___a___"), String::from("___a___"));
+            map.insert(String::from("a...,,,"), String::from("a...,,,"));
+            map.insert(String::from("!@#$%a"), String::from("!@#$%a"));
 
             for (word, matcher) in map.iter() {
                 assert_eq!(scramble_word(word.to_string()), matcher.to_string());

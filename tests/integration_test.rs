@@ -1,4 +1,4 @@
-use typoglycemia::typoglycemia;
+use typoglycemia::{typoglycemia, typoglycemia_leet};
 use unicode_segmentation::UnicodeSegmentation;
 
 #[cfg(test)]
@@ -9,6 +9,7 @@ fn it_handles_a_string_slice() {
     assert_eq!(result.chars().nth(0), Some('s'));
     assert_eq!(result.chars().nth(4), Some('e'));
 }
+
 #[test]
 fn it_does_not_typoglycemify_short_words() {
     let lst = [String::from("a"), String::from("an"), String::from("foo")];
@@ -63,31 +64,115 @@ fn it_ignores_beginning_and_ending_non_ascii() {
     assert_eq!(g.get(3), Some(&"❤️"));
 }
 
-// #[test]
-// /**
-//  * Example output
-//  * $cargo test -- --show-output
-//  */
-// fn example_1() {
-//     let input = "Once upon a midnight dreary, while I pondered, weak and weary, \
-//     Over many a quaint and curious volume of forgotten lore, \
-//     While I nodded, nearly napping, suddenly there came a tapping, \
-//     As of some one gently rapping, rapping at my chamber door.";
-//     let result = typoglycemia(input);
-//     println!("{}", result);
-//     assert_eq!(1, 1);
-// }
+#[test]
+/**
+ * Example output, The Raven by E.A. Poe (English)
+ * $cargo test -- --show-output
+ */
+fn poe_the_raven_english() {
+    let input: &'static str = "Once upon a midnight dreary, while I pondered, weak and weary, \
+    Over many a quaint and curious volume of forgotten lore, \
+    While I nodded, nearly napping, suddenly there came a tapping, \
+    As of some one gently rapping, rapping at my chamber door.";
+    let result: String = typoglycemia(input);
+    println!("");
+    println!("{}", "*".repeat(40));
+    println!("Integration test example ouput: poe_the_raven_english()");
+    println!("{}", "*".repeat(40));
+    println!("Original:\n");
+    println!("{}", input);
+    println!("\nResult:\n");
+    println!("{}", result);
+    assert_eq!(1, 1);
+}
 
-// #[test]
-// /**
-//  * Example output w/ some emojis
-//  * $cargo test -- --show-output
-//  */
-// fn example_2() {
-//     let input = "Four score and seven years ago 📜, our fathers🧓 brought forth on this \
-//     continent a new ❤️nation, conceived in Liberty, and dedicated to the\
-//     proposition that all men are created equal. 🇺🇸";
-//     let result = typoglycemia(input);
-//     println!("{}", result);
-//     assert_eq!(2, 2);
-// }
+#[test]
+/**
+ * Example output, The Raven by E.A. Poe (French)
+ * $cargo test -- --show-output
+ */
+fn poe_the_raven_french() {
+    let input = "Jadis, par une minuit lugubre, tandis que je pensais, faible et las, à maints \
+    grimoires oubliés, et que je hochais la tête, presque endormi, soudain il se fit un heurt, \
+    comme de quelqu'un qui frapperait doucement, frappant à la porte de ma chambre";
+    let result = typoglycemia(input);
+
+    println!("");
+    println!("{}", "*".repeat(40));
+    println!("Integration test example ouput: poe_the_raven_french()");
+    println!("{}", "*".repeat(40));
+    println!("Original:\n");
+    println!("{}", input);
+    println!("\nResult:\n");
+    println!("{}", result);
+    assert_eq!(1, 1);
+}
+
+#[test]
+/**
+ * Example output, The Raven by E.A. Poe (English)
+ * $cargo test -- --show-output
+ */
+fn poe_the_raven_german() {
+    let input = "Einst in einer Mittnacht schaurig, als ich in entschwundner Kunde wunderlicher Bücher forschte, \
+    bis mein Geist die Kraft verlor, und mir's trübe ward im Kopfe, kam mir's plötzlich vor, als klopfe, \
+    jemand leis ans Tor, als klopfe - klopfe jemand sacht ans Tor.";
+    let result = typoglycemia(input);
+
+    println!("");
+    println!("{}", "*".repeat(40));
+    println!("Integration test example ouput: poe_the_raven_german()");
+    println!("{}", "*".repeat(40));
+    println!("Original:\n");
+    println!("{}", input);
+    println!("\nResult:\n");
+    println!("{}", result);
+    assert_eq!(1, 1);
+}
+
+#[test]
+/**
+ * Example output, The Gettysburg Address with emojis
+ * $cargo test -- --show-output
+ */
+fn gettysburg_address_with_emojis() {
+    let input = "Four score and seven years ago📜, our 🧓fathers brought \
+    forth on this continent a new nation, conceived in Liberty, and dedicated to the \
+    proposition that all men are created equal. 🇺🇸";
+    let result = typoglycemia(input);
+
+    println!("");
+    println!("{}", "*".repeat(40));
+    println!("Integration test example ouput: gettysburg_address_with_emojis");
+    println!("{}", "*".repeat(40));
+    println!("Original:\n");
+    println!("{}", input);
+    println!("\nResult:\n");
+    println!("{}", result);
+    assert_eq!(1, 1);
+}
+
+#[test]
+/**
+ * Leet output
+ * $cargo test -- --show-output
+ */
+fn typoglycemia_leet_test() {
+    let input = "Leet-speak is a mixture of words (mostly computer-related \
+    jargon) spelled incorrectly intentionally*, usually coming from typographical errors \
+    (e.g. the becomes t3h). The words of Leet-speak are usually put together to create a \
+    dialect (small language). This dialect is used in some places for funniness. Leet-speak \
+    uses numbers, ASCII symbols, and diacritics together to make symbols that look like \
+    Latin letters.";
+    let result = typoglycemia_leet(input, 1);
+
+    println!("");
+    println!("{}", "*".repeat(40));
+    println!("Integration test example ouput: typoglycemia_leet_test()");
+    println!("{}", "*".repeat(40));
+    println!("Original:\n");
+    println!("{}", input);
+    println!("\nResult:\n");
+    println!("{}", result);
+    assert_eq!(1, 1);
+}
