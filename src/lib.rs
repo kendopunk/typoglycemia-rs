@@ -98,8 +98,7 @@ pub fn typoglycemia_leet(s: &str, level: u8) -> String {
     let tg: String = typoglycemia(s);
 
     if level == 3 {
-        return tg
-            .chars()
+        tg.chars()
             .map(|x| match x {
                 'A' => 'Д',
                 'B' | 'b' => '8',
@@ -120,10 +119,9 @@ pub fn typoglycemia_leet(s: &str, level: u8) -> String {
                 '0' => 'O',
                 _ => x,
             })
-            .collect();
+            .collect()
     } else if level == 2 {
-        return tg
-            .chars()
+        tg.chars()
             .map(|x| match x {
                 'A' => 'Д',
                 'B' | 'b' => '8',
@@ -139,10 +137,9 @@ pub fn typoglycemia_leet(s: &str, level: u8) -> String {
                 '0' => 'O',
                 _ => x,
             })
-            .collect();
+            .collect()
     } else {
-        return tg
-            .chars()
+        tg.chars()
             .map(|x| match x {
                 'A' => 'Д',
                 'B' => '8',
@@ -154,6 +151,6 @@ pub fn typoglycemia_leet(s: &str, level: u8) -> String {
                 '0' => 'O',
                 _ => x,
             })
-            .collect();
+            .collect()
     }
 }
