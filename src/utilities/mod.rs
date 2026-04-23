@@ -1,7 +1,7 @@
 use std::ops::Range;
 
-///  ASCII O-9
-const ZERO_TO_NINE: Range<usize> = 48..57;
+///  ASCII 0-9
+const ZERO_TO_NINE: Range<usize> = 48..58;
 
 /// ASCII A - Z
 const UCASE_AZ: Range<usize> = 65..91;
@@ -15,8 +15,8 @@ const LATIN_1: Range<usize> = 192..247;
 /// ASCII ø - ÿ
 const LATIN_2: Range<usize> = 248..256;
 
-/// ASCII ƒ, Š, Œ, Ž, š, œ, ž, Ÿ
-const MISC_CHARS: &[&i32] = &[&131, &138, &140, &142, &154, &156, &158, &159];
+/// Extended Latin: ƒ (402), Š (352), Œ (338), Ž (381), š (353), œ (339), ž (382), Ÿ (376) — Unicode codepoints
+const MISC_CHARS: &[usize] = &[402, 352, 338, 381, 353, 339, 382, 376];
 
 pub mod utils {
     use atoi::atoi;
@@ -37,7 +37,7 @@ pub mod utils {
         let lcase_az: Vec<usize> = LCASE_AZ.collect();
         let latin1: Vec<usize> = LATIN_1.collect();
         let latin2: Vec<usize> = LATIN_2.collect();
-        let misc_chars: Vec<usize> = MISC_CHARS.iter().map(|&x| *x as usize).collect();
+        let misc_chars: Vec<usize> = MISC_CHARS.to_vec();
 
         [zero_to_nine, ucase_az, lcase_az, latin1, latin2, misc_chars].concat()
     }
@@ -51,24 +51,22 @@ pub mod utils {
     ///
     /// # Returns
     ///
-    /// - `usize` - The first valid start index
+    /// - `Option<usize>` - The last valid end index, or `None` if no valid character exists
     ///
-    fn get_valid_end_index(s: &str, valid_chars: &[usize]) -> usize {
-        let mut ret: usize = 0;
+    fn get_valid_end_index(s: &str, valid_chars: &[usize]) -> Option<usize> {
         let trimmed: &str = s.trim();
-
         let g: Vec<&str> = trimmed.graphemes(true).collect::<Vec<&str>>();
 
         for (index, character) in g.iter().rev().enumerate() {
-            let bytes: &[u8] = character.as_bytes();
-            let first_byte: usize = bytes[0] as usize;
-            if character.is_ascii() && valid_chars.contains(&first_byte) {
-                ret = index;
-                break;
+            if let Some(c) = character.chars().next() {
+                let codepoint: usize = c as usize;
+                if valid_chars.contains(&codepoint) {
+                    return Some(g.len() - index - 1);
+                }
             }
         }
 
-        g.len() - ret - 1
+        None
     }
 
     /// Returns the index of the first allowable ASCII character in a word, per the allowance configuration  
@@ -80,23 +78,21 @@ pub mod utils {
     ///
     /// # Returns
     ///
-    /// - `usize` - The first valid start index
-    fn get_valid_start_index(s: &str, valid_chars: &[usize]) -> usize {
-        let mut ret: usize = 0;
+    /// - `Option<usize>` - The first valid start index, or `None` if no valid character exists
+    fn get_valid_start_index(s: &str, valid_chars: &[usize]) -> Option<usize> {
         let trimmed: &str = s.trim();
-
         let g: Vec<&str> = trimmed.graphemes(true).collect::<Vec<&str>>();
 
         for (index, character) in g.iter().enumerate() {
-            let bytes: &[u8] = character.as_bytes();
-            let first_byte: usize = bytes[0] as usize;
-            if character.is_ascii() && valid_chars.contains(&first_byte) {
-                ret = index;
-                break;
+            if let Some(c) = character.chars().next() {
+                let codepoint: usize = c as usize;
+                if valid_chars.contains(&codepoint) {
+                    return Some(index);
+                }
             }
         }
 
-        ret
+        None
     }
 
     /// Determines if a word contains apostrophes
@@ -209,7 +205,7 @@ pub mod utils {
     /// Strings starting with numeric characters should be kept as-is and not typoglycemified, e.g.  
     /// date (12/22/1986) and/or time (15:32)
     ///
-    fn is_numeric_string(s: &str) -> bool {
+    fn starts_with_digit(s: &str) -> bool {
         let atoi_str: Option<u64> = atoi::<u64>(s.as_bytes());
 
         atoi_str.is_some()
@@ -226,6 +222,7 @@ pub mod utils {
     /// let lng = sentence.len();
     /// let result = typoglycemia::utils::scramble_word(sentence);
     /// assert_eq!(result.len(), lng);
+    /// ```
     pub fn scramble_word(s: String) -> String {
         let input_as_str: &str = s.as_str();
 
@@ -234,11 +231,6 @@ pub mod utils {
 
         // get the graphemes
         let g: Vec<&str> = input_as_str.graphemes(true).collect::<Vec<&str>>();
-
-        // // (grapheme length <= 3 or > 15) or numeric then return as-is
-        // if g.len() <= 3 || g.len() > 15 || is_numeric_string(s.as_str()) {
-        //     return s;
-        // }
 
         if has_apostrophes(&s) && has_hyphens(&s) {
             return handle_apostrophe_and_hyphenated_string(&s);
@@ -253,12 +245,18 @@ pub mod utils {
         }
 
         // (grapheme length <= 3 or > 15) or numeric then return as-is
-        if g.len() <= 3 || g.len() > 15 || is_numeric_string(s.as_str()) {
+        if g.len() <= 3 || g.len() > 15 || starts_with_digit(s.as_str()) {
             return s;
         }
 
-        let start_index = get_valid_start_index(input_as_str, &valid_chars);
-        let end_index = get_valid_end_index(input_as_str, &valid_chars);
+        let start_index = match get_valid_start_index(input_as_str, &valid_chars) {
+            Some(i) => i,
+            None => return s,
+        };
+        let end_index = match get_valid_end_index(input_as_str, &valid_chars) {
+            Some(i) => i,
+            None => return s,
+        };
 
         // for example, this weird string w/ only one valid ascii character -> __a__
         if start_index == end_index {
@@ -286,16 +284,16 @@ pub mod utils {
         use super::*;
 
         #[test]
-        fn test_is_numeric_string() {
+        fn test_starts_with_digit() {
             let lst1 = ["hello", " ", "_123"];
             for item in lst1.iter() {
-                let result = is_numeric_string(item);
+                let result = starts_with_digit(item);
                 assert_eq!(result, false);
             }
 
             let lst2 = ["12345", "3.1415", "12/22/1986", "36-26-36"];
             for item in lst2.iter() {
-                let result = is_numeric_string(item);
+                let result = starts_with_digit(item);
                 assert_eq!(result, true);
             }
         }
@@ -312,7 +310,7 @@ pub mod utils {
             map.insert("❤️ to everyone", 2usize);
 
             for (word, index) in map.iter() {
-                assert_eq!(get_valid_start_index(word, &all_valid_ascii), *index);
+                assert_eq!(get_valid_start_index(word, &all_valid_ascii), Some(*index));
             }
         }
 
@@ -328,7 +326,7 @@ pub mod utils {
             map.insert("to everyone❤️", 10usize);
 
             for (word, index) in map.iter() {
-                assert_eq!(get_valid_end_index(word, &all_valid_ascii), *index);
+                assert_eq!(get_valid_end_index(word, &all_valid_ascii), Some(*index));
             }
         }
 

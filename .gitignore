@@ -23,6 +23,7 @@ target/
 # misc
 DEVNOTES.txt
 OBJECTIVES.txt
+.vscode/
 
 
 # Added by cargo
