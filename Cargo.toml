@@ -1,10 +1,10 @@
 [package]
 name = "typoglycemia"
-version = "1.0.1"
+version = "1.0.2"
 edition = "2024"
 rust-version = "1.87.0"
 description = """
-A function to convert text to typoglycemic format
+A function to convert text to typoglycemic format with a Leet-speak variant. The function takes a string as input and returns a new string where the first and last letters of each word are unchanged, but the middle letters are shuffled randomly. Additionally, certain letters are replaced with their Leet-speak equivalents (e.g., 'a' becomes '4', 'e' becomes '3', etc.). This creates a fun and visually interesting way to obfuscate text while still keeping it somewhat readable.
 """
 authors = ["Mark Fehrenbacher <kendopunk@hotmail.com"]
 license = "MIT"

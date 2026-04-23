@@ -93,6 +93,7 @@ pub fn typoglycemia(s: &str) -> String {
 /// ];
 ///
 /// assert!(v1.contains(&result));
+/// ```
 ///
 pub fn typoglycemia_leet(s: &str, level: u8) -> String {
     let tg: String = typoglycemia(s);
