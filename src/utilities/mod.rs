@@ -1,66 +1,72 @@
-use std::ops::Range;
-
-///  ASCII 0-9
-const ZERO_TO_NINE: Range<usize> = 48..58;
-
-/// ASCII A - Z
-const UCASE_AZ: Range<usize> = 65..91;
-
-/// ASCII a - z
-const LCASE_AZ: Range<usize> = 97..123;
-
-/// ASCII À - ö
-const LATIN_1: Range<usize> = 192..247;
-
-/// ASCII ø - ÿ
-const LATIN_2: Range<usize> = 248..256;
-
-/// Extended Latin: ƒ (402), Š (352), Œ (338), Ž (381), š (353), œ (339), ž (382), Ÿ (376) — Unicode codepoints
-const MISC_CHARS: &[usize] = &[402, 352, 338, 381, 353, 339, 382, 376];
-
 pub mod utils {
     use atoi::atoi;
     use rand::{rng, seq::SliceRandom};
     use unicode_segmentation::UnicodeSegmentation;
 
-    use crate::utilities::{LATIN_1, LATIN_2, LCASE_AZ, MISC_CHARS, UCASE_AZ, ZERO_TO_NINE};
-
-    /// Get usize vector of valid ASCII characters
-    ///
-    /// # Returns
-    ///
-    /// - `Vec<usize>` - Describe the return value.
-    ///
-    fn get_all_valid_ascii_chars() -> Vec<usize> {
-        let zero_to_nine: Vec<usize> = ZERO_TO_NINE.collect();
-        let ucase_az: Vec<usize> = UCASE_AZ.collect();
-        let lcase_az: Vec<usize> = LCASE_AZ.collect();
-        let latin1: Vec<usize> = LATIN_1.collect();
-        let latin2: Vec<usize> = LATIN_2.collect();
-        let misc_chars: Vec<usize> = MISC_CHARS.to_vec();
-
-        [zero_to_nine, ucase_az, lcase_az, latin1, latin2, misc_chars].concat()
+    /// Build a compile-time boolean lookup table keyed by Unicode codepoint.
+    /// Index = codepoint, value = `true` if valid word-boundary character.
+    /// Covers: 0–9, A–Z, a–z, Latin-1 (À–ö, 192–246), Latin-2 (ø–ÿ, 248–255),
+    /// and extended Latin: Œ(338), œ(339), Š(352), š(353), Ÿ(376), Ž(381), ž(382), ƒ(402).
+    const fn build_valid_codepoints() -> [bool; 403] {
+        let mut table = [false; 403];
+        let mut i = 48usize;
+        while i < 58 {
+            table[i] = true;
+            i += 1;
+        } // 0-9
+        let mut i = 65usize;
+        while i < 91 {
+            table[i] = true;
+            i += 1;
+        } // A-Z
+        let mut i = 97usize;
+        while i < 123 {
+            table[i] = true;
+            i += 1;
+        } // a-z
+        let mut i = 192usize;
+        while i < 247 {
+            table[i] = true;
+            i += 1;
+        } // Latin-1 (À–ö)
+        let mut i = 248usize;
+        while i < 256 {
+            table[i] = true;
+            i += 1;
+        } // Latin-2 (ø–ÿ)
+        table[338] = true;
+        table[339] = true; // Œ, œ
+        table[352] = true;
+        table[353] = true; // Š, š
+        table[376] = true; // Ÿ
+        table[381] = true;
+        table[382] = true; // Ž, ž
+        table[402] = true; // ƒ
+        table
     }
+
+    /// Compile-time lookup table for valid word-boundary codepoints.
+    /// Index by `c as usize`; any codepoint ≥ 403 is automatically invalid.
+    static VALID_CODEPOINTS: [bool; 403] = build_valid_codepoints();
 
     /// Returns the index of the last allowable ASCII character in a word, per the allowance configuration  
     ///
     /// # Arguments
     ///
     /// - `s` (`&str`) - The input string
-    /// - `valid_chars` (`&[usize]`) - usize array of valid ASCII characters
     ///
     /// # Returns
     ///
     /// - `Option<usize>` - The last valid end index, or `None` if no valid character exists
     ///
-    fn get_valid_end_index(s: &str, valid_chars: &[usize]) -> Option<usize> {
+    fn get_valid_end_index(s: &str) -> Option<usize> {
         let trimmed: &str = s.trim();
         let g: Vec<&str> = trimmed.graphemes(true).collect::<Vec<&str>>();
 
         for (index, character) in g.iter().rev().enumerate() {
             if let Some(c) = character.chars().next() {
                 let codepoint: usize = c as usize;
-                if valid_chars.contains(&codepoint) {
+                if codepoint < VALID_CODEPOINTS.len() && VALID_CODEPOINTS[codepoint] {
                     return Some(g.len() - index - 1);
                 }
             }
@@ -74,19 +80,18 @@ pub mod utils {
     /// # Arguments
     ///
     /// - `s` (`&str`) - The input string
-    /// - `valid_chars` (`&[usize]`) - vector comprisesd of usize valid ASCII characters
     ///
     /// # Returns
     ///
     /// - `Option<usize>` - The first valid start index, or `None` if no valid character exists
-    fn get_valid_start_index(s: &str, valid_chars: &[usize]) -> Option<usize> {
+    fn get_valid_start_index(s: &str) -> Option<usize> {
         let trimmed: &str = s.trim();
         let g: Vec<&str> = trimmed.graphemes(true).collect::<Vec<&str>>();
 
         for (index, character) in g.iter().enumerate() {
             if let Some(c) = character.chars().next() {
                 let codepoint: usize = c as usize;
-                if valid_chars.contains(&codepoint) {
+                if codepoint < VALID_CODEPOINTS.len() && VALID_CODEPOINTS[codepoint] {
                     return Some(index);
                 }
             }
@@ -232,9 +237,6 @@ pub mod utils {
     pub fn scramble_word(s: String) -> String {
         let input_as_str: &str = s.as_str();
 
-        // vector of valid ASCII characters (usize)
-        let valid_chars: Vec<usize> = get_all_valid_ascii_chars();
-
         // get the graphemes
         let g: Vec<&str> = input_as_str.graphemes(true).collect::<Vec<&str>>();
 
@@ -255,11 +257,11 @@ pub mod utils {
             return s;
         }
 
-        let start_index = match get_valid_start_index(input_as_str, &valid_chars) {
+        let start_index = match get_valid_start_index(input_as_str) {
             Some(i) => i,
             None => return s,
         };
-        let end_index = match get_valid_end_index(input_as_str, &valid_chars) {
+        let end_index = match get_valid_end_index(input_as_str) {
             Some(i) => i,
             None => return s,
         };
@@ -306,8 +308,6 @@ pub mod utils {
 
         #[test]
         fn test_get_valid_start_index() {
-            let all_valid_ascii = get_all_valid_ascii_chars();
-
             let mut map: std::collections::HashMap<&'static str, usize> =
                 std::collections::HashMap::new();
             map.insert("hello", 0usize);
@@ -316,14 +316,12 @@ pub mod utils {
             map.insert("❤️ to everyone", 2usize);
 
             for (word, index) in map.iter() {
-                assert_eq!(get_valid_start_index(word, &all_valid_ascii), Some(*index));
+                assert_eq!(get_valid_start_index(word), Some(*index));
             }
         }
 
         #[test]
         fn test_get_valid_end_index() {
-            let all_valid_ascii = get_all_valid_ascii_chars();
-
             let mut map: std::collections::HashMap<&'static str, usize> =
                 std::collections::HashMap::new();
             map.insert("hello", 4usize);
@@ -332,7 +330,7 @@ pub mod utils {
             map.insert("to everyone❤️", 10usize);
 
             for (word, index) in map.iter() {
-                assert_eq!(get_valid_end_index(word, &all_valid_ascii), Some(*index));
+                assert_eq!(get_valid_end_index(word), Some(*index));
             }
         }
 

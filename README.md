@@ -119,6 +119,44 @@ Input:  Once upon a midnight dreary
 Output: 0cи3 upoи a m1h1иdgt da3rry
 ```
 
+## Benchmarks
+
+Benchmarks are provided via [Criterion](https://docs.rs/criterion) and cover both individual word shapes and sentence-level throughput.
+
+```sh
+$> cargo bench
+```
+
+HTML reports with charts are written to `target/criterion/` after each run. Successive runs are compared automatically — Criterion will flag regressions and improvements.
+
+**What is measured:**
+
+| Benchmark               | Input                                            | Notes                                 |
+| ----------------------- | ------------------------------------------------ | ------------------------------------- |
+| `word/short`            | `"the"` (≤3 graphemes)                           | Fast-path return, no scrambling       |
+| `word/plain`            | `"country"` (7 chars)                            | Typical English word                  |
+| `word/long`             | `"antidisestablishmentarianism"` (>15 graphemes) | Fast-path return, no scrambling       |
+| `word/apostrophe`       | `"doesn't"` (U+2019)                             | Smart-tick normalization + split path |
+| `word/hyphenated`       | `"Spanish-speaking"`                             | Two `scramble_word` calls internally  |
+| `word/latin boundary`   | `"café"`                                         | Latin-1 boundary character            |
+| `sentence/typoglycemia` | ~25-word prose passage                           | End-to-end throughput                 |
+| `sentence/leet level 1` | same passage                                     | With leet substitution, level 1       |
+| `sentence/leet level 3` | same passage                                     | With leet substitution, level 3       |
+
+**Representative results** (Apple M1 Pro, release build):
+
+```
+word/short (≤3 graphemes, fast path)   time: [~393 ns]
+word/plain 7-char                      time: [~1.3 µs]
+word/long (>15 graphemes, fast path)   time: [~2.7 µs]
+word/apostrophe (doesn't)              time: [~2.2 µs]
+word/hyphenated (Spanish-speaking)     time: [~4.3 µs]
+word/latin boundary (café)             time: [~802 ns]
+sentence/typoglycemia (~25 words)      time: [~38 µs]
+sentence/typoglycemia_leet level 1     time: [~40 µs]
+sentence/typoglycemia_leet level 3     time: [~39 µs]
+```
+
 ## References
 
 - [Chunking: The Brain’s Shortcut to Understanding and Recalling Information (observer.com)](https://observer.com/2017/03/chunking-typoglycemia-brain-consume-information/)
