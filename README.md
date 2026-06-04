@@ -146,15 +146,15 @@ HTML reports with charts are written to `target/criterion/` after each run. Succ
 **Representative results** (Apple M1 Pro, release build):
 
 ```
-word/short (≤3 graphemes, fast path)   time: [~630 ns]
-word/plain 7-char                      time: [~1.5 µs]
-word/long (>15 graphemes, fast path)   time: [~2.9 µs]
-word/apostrophe (doesn't)              time: [~2.9 µs]
-word/hyphenated (Spanish-speaking)     time: [~5.0 µs]
-word/latin boundary (café)             time: [~1.0 µs]
-sentence/typoglycemia (~25 words)      time: [~50 µs]
-sentence/typoglycemia_leet level 1     time: [~51 µs]
-sentence/typoglycemia_leet level 3     time: [~52 µs]
+word/short (≤3 graphemes, fast path)   time: [~393 ns]
+word/plain 7-char                      time: [~1.3 µs]
+word/long (>15 graphemes, fast path)   time: [~2.7 µs]
+word/apostrophe (doesn't)              time: [~2.2 µs]
+word/hyphenated (Spanish-speaking)     time: [~4.3 µs]
+word/latin boundary (café)             time: [~802 ns]
+sentence/typoglycemia (~25 words)      time: [~38 µs]
+sentence/typoglycemia_leet level 1     time: [~40 µs]
+sentence/typoglycemia_leet level 3     time: [~39 µs]
 ```
 
 ## References
