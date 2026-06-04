@@ -91,6 +91,34 @@ $> cargo doc --no-deps --document-private-items
 $> cargo test -- --show-output # display some examples
 ```
 
+## Interactive Testing
+
+A cargo example is included for quick manual testing during development.
+
+```sh
+# plain typoglycemia
+$> cargo run --example try -- "your text here"
+
+# leet-speak at default level 1
+$> cargo run --example try -- --leet "your text here"
+
+# leet-speak at a specific level (1–3)
+$> cargo run --example try -- --leet 2 "your text here"
+```
+
+Example output:
+
+```
+Input:  Once upon a midnight dreary while I pondered weak and weary
+Output: Once uopn a mihdgnit dearry while I pondreed weak and weray
+
+Input:  Once upon a midnight dreary
+Output: 0cne uopn a mn1ghd1t darery
+
+Input:  Once upon a midnight dreary
+Output: 0cи3 upoи a m1h1иdgt da3rry
+```
+
 ## References
 
 - [Chunking: The Brain’s Shortcut to Understanding and Recalling Information (observer.com)](https://observer.com/2017/03/chunking-typoglycemia-brain-consume-information/)
