@@ -18,3 +18,10 @@ homepage = "https://github.com/kendopunk/typoglycemia-rs"
 atoi = "2.0.0"
 rand = "0.9.1"
 unicode-segmentation = "1.12.0"
+
+[dev-dependencies]
+criterion = { version = "0.8.2", features = ["html_reports"] }
+
+[[bench]]
+name = "scramble_benchmarks"
+harness = false
