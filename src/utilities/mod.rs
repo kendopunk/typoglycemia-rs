@@ -108,7 +108,9 @@ pub mod utils {
     fn has_apostrophes(s: &str) -> bool {
         let g: Vec<&str> = s.graphemes(true).collect::<Vec<&str>>();
         let mut it: std::slice::Iter<'_, &str> = g.iter();
-        let index: Option<usize> = it.position(|&r| r == "'");
+        // U+0027 typewriter apostrophe, U+2019 right single quotation mark, or
+        // U+2018 left single quotation mark (all treated as apostrophes)
+        let index: Option<usize> = it.position(|&r| r == "'" || r == "\u{2019}" || r == "\u{2018}");
 
         index.is_some()
     }
@@ -143,8 +145,10 @@ pub mod utils {
     /// - `String` - The modified string with portions scrambled
     ///
     fn handle_apostrophe_string(s: &str) -> String {
+        // Normalize U+2019 / U+2018 smart ticks to U+0027 so the split works uniformly
+        let normalized = s.replace('\u{2019}', "'").replace('\u{2018}', "'");
         let mut v: Vec<String> = Vec::new();
-        let it: std::str::Split<'_, &str> = s.split("'");
+        let it: std::str::Split<'_, &str> = normalized.split("'");
         for part in it {
             v.push(scramble_word(part.to_owned()));
         }
@@ -185,10 +189,12 @@ pub mod utils {
     /// - `String` - The re-joined string
     ///
     fn handle_apostrophe_and_hyphenated_string(s: &str) -> String {
+        // Normalize U+2019 / U+2018 smart ticks to U+0027 so the split works uniformly
+        let normalized = s.replace('\u{2019}', "'").replace('\u{2018}', "'");
         let mut v1: Vec<String> = Vec::new();
         let mut v2: Vec<String> = Vec::new();
 
-        let it: std::str::Split<'_, &str> = s.split("-");
+        let it: std::str::Split<'_, &str> = normalized.split("-");
         for i in it {
             let st = i.split("'");
             for s in st {
@@ -334,6 +340,20 @@ pub mod utils {
         fn test_has_apostrophes() {
             let lst1 = ["doesn't", "won't", "couldn't", "O'Shag-hennesey"];
             for item in lst1.iter() {
+                let result = has_apostrophes(item);
+                assert_eq!(result, true);
+            }
+
+            // U+2019 right single quotation mark (smart tick)
+            let lst1_smart = ["doesn\u{2019}t", "won\u{2019}t", "couldn\u{2019}t"];
+            for item in lst1_smart.iter() {
+                let result = has_apostrophes(item);
+                assert_eq!(result, true);
+            }
+
+            // U+2018 left single quotation mark (opening smart tick; rare mid-word usage)
+            let lst1_open = ["O\u{2018}Brien", "wouldn\u{2018}t"];
+            for item in lst1_open.iter() {
                 let result = has_apostrophes(item);
                 assert_eq!(result, true);
             }

@@ -303,3 +303,59 @@ fn numeric_prefix_tokens_are_returned_unchanged() {
         );
     }
 }
+
+// Smart-tick (U+2019): words containing the right single quotation mark ' must be
+// treated identically to words containing a typewriter apostrophe '.
+
+#[test]
+fn smart_tick_apostrophe_is_treated_as_regular_apostrophe() {
+    // "doesn\u{2019}t" — first char 'd' and last char 't' must be anchored.
+    let input = "doesn\u{2019}t";
+    let result = typoglycemia(input);
+    let parts: Vec<&str> = result.split('\'').collect();
+    assert_eq!(
+        parts.len(),
+        2,
+        "U+2019 should be normalized to ' and produce two parts"
+    );
+    assert_eq!(
+        parts[0].chars().next(),
+        Some('d'),
+        "first char of 'doesn' must stay 'd'"
+    );
+    assert_eq!(
+        parts[0].chars().last(),
+        Some('n'),
+        "last char of 'doesn' must stay 'n'"
+    );
+    assert_eq!(
+        parts[1], "t",
+        "'t' is too short to scramble and must be unchanged"
+    );
+}
+
+#[test]
+fn smart_tick_word_length_is_preserved() {
+    // Total grapheme count must be identical before and after scrambling.
+    let input = "couldn\u{2019}t";
+    let result = typoglycemia(input);
+    use unicode_segmentation::UnicodeSegmentation;
+    let in_len = input.graphemes(true).count();
+    let out_len = result.graphemes(true).count();
+    assert_eq!(in_len, out_len, "grapheme count must not change");
+}
+
+#[test]
+fn left_smart_tick_mid_word_is_not_shuffled() {
+    // U+2018 left single quote appearing mid-word (e.g. from aggressive autocorrect).
+    // Without detection it would be treated as a scrambable interior character and
+    // could float to any position; with detection it is normalized to U+0027 and
+    // the word is split/rejoined correctly.
+    let input = "O\u{2018}Brien"; // O'Brien with opening smart tick
+    let result = typoglycemia(input);
+    let parts: Vec<&str> = result.split('\'').collect();
+    assert_eq!(parts.len(), 2, "U+2018 should be normalized to ' and produce two parts");
+    assert_eq!(parts[0], "O", "'O' must not move");
+    assert_eq!(parts[1].chars().next(), Some('B'), "first char of 'Brien' must stay 'B'");
+    assert_eq!(parts[1].chars().last(), Some('n'), "last char of 'Brien' must stay 'n'");
+}
